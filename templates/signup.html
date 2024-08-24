@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Registrati{% endblock %}
+
+{% block content %} 
+<a href="/">Torna indietro</a>
+	<div class="col-4 offset-md-4 bg-light p-4 border rounded">
+		<form action="/signup" method="POST">
+			<div class="mb-3">
+				<label for="nameInput" class="form-label">Nome</label>
+				<input type="text" class="form-control" name="name" id="nameInput" required>
+			</div>
+			<div class="mb-3">
+				<label for="surnameInput" class="form-label">Cognome</label>
+				<input type="text" class="form-control" name="surname" id="surnameInput" required>
+			</div>
+			<div class="mb-3">
+				<label for="emailInput" class="form-label">Email</label>
+				<input type="email" class="form-control" name="email" id="emailInput" required>
+			</div>
+			<div class="mb-3">
+				<label for="tipo">Tipo di account:</label>
+				<select class="form-select mt-2" aria-label="tipo" id="tipo" name="tipo" required>
+					<option value="" selected>Scegli il tipo di account</option>
+					<option value="personal_trainer">Personal Trainer</option>
+					<option value="client">Cliente</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<label for="passwordInput" class="form-label">Password</label>
+				<input type="password" class="form-control" name="password" id="passwordInput">
+				<div id="passwordHelp" class="form-text">We'll never share your password with anyone else.</div>
+			</div>
+			<button type="submit" class="btn btn-primary">Registrati</button>
+		</form>
+	</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Profilo{% endblock %}
+
+{% block content %}
+	<h1>Ciao {{current_user.nome}}! </h1>
+	<div class="row">
+		<div class="col-6">
+			<h2>Allenamenti pubblici</h2>
+			{% for allenamento in allenamenti %}
+        {% if allenamento.visibile != 0 %}
+        <div class="col-3 mb-3">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{ allenamento.titolo }}</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello}}</h6>
+              <p class="card-text">{{allenamento.descrizione}}</p>
+              <a href="#" class="btn btn-success">Go somewhere</a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+		</div>
+		<div class="col-6">
+			<h2>Allenamenti privati</h2>
+			{% for allenamento in allenamenti %}
+        {% if allenamento.visibile == 0 %}
+        <div class="col-3 mb-3">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{ allenamento.titolo }}</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello}}</h6>
+              <p class="card-text">{{allenamento.descrizione}}</p>
+              <a href="#" class="btn btn-success">Go somewhere</a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+		</div>
+	</div>
+{% endblock %}

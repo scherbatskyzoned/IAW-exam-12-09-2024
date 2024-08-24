@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+
+<main class="col">
+  <!-- vedi come fare qua -->
+  <section class="row justify-content-center"> 
+    {% if current_user.is_authenticated %}
+      <h2>Ciao {{ current_user.__class__.__name__ }} {{ current_user.nome }}!</h2>
+    {% endif %}
+    <div class="mx-auto">
+      <h1> GetFit | Il futuro del fitness!</h1>
+    </div>
+    <img src="{{ url_for('static', filename='homepage.jpg') }}" class="img-fluid mb-3" alt="Foto principale della palestra">
+  </section>
+  
+  <div class="row">
+    {% if current_user.__class__.__name__ == "PersonalTrainer" %}
+      {% for allenamento in allenamenti %}
+        {% if allenamento.visibile != 0 %}
+        <div class="col-3 mb-3">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{ allenamento.titolo }}</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello}}</h6>
+              <p class="card-text">{{allenamento.descrizione}}</p>
+              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione}}</small></p>
+              <!-- <a href="#" class="btn btn-success">Go somewhere</a> -->
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+      <a href="/create_workout">
+        <!-- SISTEMARE BOTTONE -->
+        <button type="text" class="btn btn-primary" value="create_workout">Crea allenamento</button>
+      </a>
+
+    {% elif current_user.__class__.__name__ == "Client" %}
+      <h4>Personal trainer</h4>
+      {% for pt in pts %}
+        <div class="col-3 mb-3">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{ pt.nome }} {{ pt.cognome }}</h5>
+              <p class="card-text">Valutazione dei clienti: {{ pt.rating }} </p>
+              <p class="card-text">Numero di valutazioni: {{ pt.numOfRatings }} </p>
+              <a href="#" class="btn btn-success">Assumi</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+
+
+  {% if not current_user.is_authenticated %}
+    <section class="row mt-4">
+      <a href="/signup">
+      <button type="text" class="btn btn-primary btn-lg" value="Registrati ora">REGISTRATI ORA</button></a>
+    </section>
+  {% endif %}  
+</main>
+{% endblock %}
