@@ -21,9 +21,8 @@ def create_allenamento(workout, pt_id):
 	return success
 
 
-
 def get_allenamenti():
-	query = 'SELECT * FROM Allenamenti ORDER BY id_allenamento DESC'
+	query = 'SELECT * FROM Allenamenti ORDER BY data_creazione DESC'
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
@@ -39,7 +38,7 @@ def get_allenamenti():
 	return result
 
 def get_allenamenti_by_pt(pt_id):
-	query = 'SELECT * FROM Allenamenti WHERE id_pt=? ORDER BY id_allenamento DESC'
+	query = 'SELECT * FROM Allenamenti WHERE pt_id=? ORDER BY data_creazione DESC'
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()

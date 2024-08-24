@@ -150,11 +150,12 @@ def create_workout():
 
 
 # define pt profile page
-
-# @app.route("/pt_profile/<int:pt_id>")
-# def pt_profile(pt_id):
-#   allenamenti_pt_db = allenamenti_dao.get_allenamenti_by_pt(pt_id)
-#   return render_template('pt_profile.html',allenamenti=allenamenti_pt_db)
+@app.route("/profile")
+def pt_profile():
+  email = request.cookies.get('remember_token').split('|')[0]
+  pt_id = utenti_dao.get_pt_id_by_email(email)
+  allenamenti_pt_db = allenamenti_dao.get_allenamenti_by_pt(pt_id)
+  return render_template('profile.html',allenamenti=allenamenti_pt_db)
 
 
 
