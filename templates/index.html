@@ -7,7 +7,7 @@
   <!-- vedi come fare qua -->
   <section class="row justify-content-center"> 
     {% if current_user.is_authenticated %}
-      <h2>Ciao {{ current_user.__class__.__name__ }} {{ current_user.nome }}!</h2>
+      <h2>Ciao {{ current_user.__class__.__name__ }} {{ current_user.nome.capitalize() }}!</h2>
     {% endif %}
     <div class="mx-auto">
       <h1> GetFit | Il futuro del fitness!</h1>
@@ -22,9 +22,9 @@
         <div class="col-3 mb-3">
           <div class="card" style="width: 18rem;">
             <div class="card-body">
-              <h5 class="card-title">{{ allenamento.titolo }}</h5>
-              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello}}</h6>
-              <p class="card-text">{{allenamento.descrizione}}</p>
+              <h5 class="card-title">{{ allenamento.titolo.capitalize() }}</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
+              <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
               <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione}}</small></p>
               <!-- <a href="#" class="btn btn-success">Go somewhere</a> -->
             </div>
@@ -43,7 +43,7 @@
         <div class="col-3 mb-3">
           <div class="card" style="width: 18rem;">
             <div class="card-body">
-              <h5 class="card-title">{{ pt.nome }} {{ pt.cognome }}</h5>
+              <h5 class="card-title">{{ pt.nome.capitalize() }} {{ pt.cognome.capitalize() }}</h5>
               <p class="card-text">Valutazione dei clienti: {{ pt.rating }} </p>
               <p class="card-text">Numero di valutazioni: {{ pt.numOfRatings }} </p>
               <a href="#" class="btn btn-success">Assumi</a>

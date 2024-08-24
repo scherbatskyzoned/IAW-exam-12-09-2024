@@ -158,6 +158,49 @@ def pt_profile():
   return render_template('profile.html',allenamenti=allenamenti_pt_db)
 
 
+# define modify page for workouts
+@app.route("/modify_workout/<int:id_allenamento>", methods=['POST','GET'])
+def modify_workout(id_allenamento):
+  if request.method == 'POST':
+    workout = request.form.to_dict()
+    print("workout to modify",workout)
+
+    visibilita = workout.get("pubblico", "privato")
+    if visibilita == "pubblico":
+      workout['visibile'] = 1
+    else:
+      workout['visibile'] = 0
+
+    # print(form.get("pubblico", "privato"))
+    if workout['titolo'] == '':
+      app.logger.error('Il campo non può essere vuoto')
+      return redirect(url_for('index'))
+    
+    if workout['description'] == '':
+      app.logger.error('Il campo non può essere vuoto')
+      return redirect(url_for('index'))  
+
+    if workout['livello'] == '':
+      app.logger.error('Il campo non può essere vuoto')
+      return redirect(url_for('index'))  
+
+    workout['id_allenamento'] = id_allenamento
+    success = allenamenti_dao.modifica_allenamento(workout)
+
+    if success:
+      return redirect(url_for('pt_profile'))
+    return redirect(url_for('index'))
+  
+  else:
+    allenamento_db = allenamenti_dao.get_allenamento(id_allenamento)
+    return render_template("modify_workout.html", allenamento=allenamento_db)
+
+
+# define delete page for workouts
+@app.route("/delete_workout/<int:id_allenamento>", methods=['POST'])
+def delete_workout(id_allenamento):
+  allenamenti_dao.delete_workout(id_allenamento)
+  return redirect(url_for("pt_profile"))
 
 # if __name__ == "__main__":
 #  app.run(host='0.0.0.0', port=3000, debug= True)
