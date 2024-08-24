@@ -13,6 +13,7 @@ app.config['SECRET_KEY'] = 's3cr3t_v41u3'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# prova commit
 
 # Homepage
 @app.route('/')
