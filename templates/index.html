@@ -17,12 +17,13 @@
   
   <div class="row">
     {% if current_user.__class__.__name__ == "PersonalTrainer" %}
+      <h4>Allenamenti</h4>
       {% for allenamento in allenamenti %}
         {% if allenamento.visibile != 0 %}
         <div class="col-3 mb-3">
           <div class="card" style="width: 18rem;">
             <div class="card-body">
-              <h5 class="card-title">{{ allenamento.titolo.capitalize() }}</h5>
+              <h5 class="card-title">{{ allenamento.titolo }}</h5>
               <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
               <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
               <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione}}</small></p>
@@ -36,21 +37,45 @@
         <!-- SISTEMARE BOTTONE -->
         <button type="text" class="btn btn-primary" value="create_workout">Crea allenamento</button>
       </a>
-
+			<div class="mt-3">
+				<h4>Clienti</h4>
+			</div>
+			<div class="col-5">
+				<ul class="list-group">
+				{% for cliente in clienti %}
+					<li class="list-group-item d-flex justify-content-between align-items-center">
+						<form action="/schede" method="get">
+							<input type="hidden" id="client_id" name="client_id" value="{{cliente.client_id}}" />
+							<button type="submit" class="btn btn-success">{{cliente.nome.capitalize()}} {{cliente.cognome.capitalize()}}</button> 
+							<span class="badge text-bg-primary rounded-pill">to-put-#schede</span>
+						</form>
+						<!-- <a href="/schede">{{cliente.nome.capitalize()}} {{cliente.cognome.capitalize()}}</a>
+						<span class="badge text-bg-primary rounded-pill">to-put-#schede</span> -->
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
     {% elif current_user.__class__.__name__ == "Client" %}
-      <h4>Personal trainer</h4>
-      {% for pt in pts %}
-        <div class="col-3 mb-3">
-          <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">{{ pt.nome.capitalize() }} {{ pt.cognome.capitalize() }}</h5>
-              <p class="card-text">Valutazione dei clienti: {{ pt.rating }} </p>
-              <p class="card-text">Numero di valutazioni: {{ pt.numOfRatings }} </p>
-              <a href="#" class="btn btn-success">Assumi</a>
+      {% if current_user.pt_id is none %}
+        <h4>Personal trainer</h4>
+        {% for pt in pts %}
+          <div class="col-3 mb-3">
+            <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">{{ pt.nome.capitalize() }} {{ pt.cognome.capitalize() }}</h5>
+                <p class="card-text">Valutazione dei clienti: {{ pt.rating }} </p>
+                <p class="card-text">Numero di valutazioni: {{ pt.numOfRatings }} </p>
+								<form action="/assumi_pt/{{pt.pt_id}}" method="post">
+									<button type="submit" class="btn btn-success">Assumi</button> 
+									<!-- INLINE bottone -->
+								</form>
+              </div>
             </div>
           </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      {% else %}
+        <h4><a href="/schede">Le mie schede</a></h4>
+      {% endif %}
     {% endif %}
   </div>
 

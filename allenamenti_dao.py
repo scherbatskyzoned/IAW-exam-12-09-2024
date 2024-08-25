@@ -71,6 +71,7 @@ def modifica_allenamento(workout):
 	connection.close()
 	return success
 
+
 def get_allenamenti_by_pt(pt_id):
 	query = 'SELECT * FROM Allenamenti WHERE pt_id=? ORDER BY data_creazione DESC'
 	connection = sqlite3.connect('db/personal.db')
@@ -86,6 +87,7 @@ def get_allenamenti_by_pt(pt_id):
 	connection.close()
 
 	return result
+
 
 def delete_workout(id_allenamento):
 	query = 'DELETE FROM Allenamenti WHERE id_allenamento=?'

@@ -42,13 +42,13 @@ def create_client(user):
 
 
 def get_personal_trainers():
-	query = 'SELECT * FROM Utenti WHERE tipo = ?'
+	query = 'SELECT * FROM PersonalTrainers'
 
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 
-	cursor.execute(query, ("personal_trainer",))
+	cursor.execute(query)
 
 	result = cursor.fetchall()
 	
@@ -58,23 +58,8 @@ def get_personal_trainers():
 	return result
 
 
-# def get_user_by_id(id_utente):
-# 	query = 'SELECT * FROM Utenti WHERE id = ?'
-
-# 	connection = sqlite3.connect('db/personal.db')
-# 	connection.row_factory = sqlite3.Row
-# 	cursor = connection.cursor()
-
-# 	cursor.execute(query, (id_utente,))
-
-# 	result = cursor.fetchone()
-	
-# 	cursor.close()
-# 	connection.close()
-
-# 	return result
-
 def get_pt_id_by_email(user_email):
+	default = 0
 	query = 'SELECT pt_id FROM PersonalTrainers WHERE email = ?'
 
 	connection = sqlite3.connect('db/personal.db')
@@ -84,12 +69,39 @@ def get_pt_id_by_email(user_email):
 	result = cursor.fetchone()
 	cursor.close()
 	connection.close()
-	print(result['pt_id'])
+	# print(result['pt_id'])
+	if result is None:
+		return default
 	return result['pt_id']
 
+def get_pt_clients(pt_id):
+	query = 'SELECT * FROM Clients WHERE pt_id = ?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	cursor.execute(query,(pt_id,))
+	clients = cursor.fetchall()
+	cursor.close()
+	connection.close()
+	return clients
+
+def get_client_id_by_email(user_email):
+	query = 'SELECT client_id FROM Clients WHERE email = ?'
+
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	cursor.execute(query,(user_email,))
+	result = cursor.fetchone()
+	cursor.close()
+	connection.close()
+	# print(result['client_id'])
+	return result['client_id']
+
+# CONTROLLA SUCCESS
 def get_user_by_email(user_email):
 	type = 0 # 0: personal_trainer, 1: client
-
+	# try using only 1 query, 2 tables in query
 	query1 = 'SELECT * FROM PersonalTrainers WHERE email = ?'
 	query2 = 'SELECT * FROM Clients WHERE email = ?'
 
@@ -99,14 +111,9 @@ def get_user_by_email(user_email):
 	print("utenti_dao email", user_email)
 	cursor.execute(query1,(user_email,)) # Personal Trainers
 	result = cursor.fetchone()
-	# cursor.close()
-	# connection.close()
 	print("query 1:",result)
 
 	if result is None:
-		# connection = sqlite3.connect('db/personal.db')
-		# connection.row_factory = sqlite3.Row
-		# cursor = connection.cursor()
 		cursor.execute(query2, (user_email,)) # Clients
 		result = cursor.fetchone()
 		print("query 2:", result)
@@ -116,3 +123,22 @@ def get_user_by_email(user_email):
 	connection.close()
 	return result, type
 
+
+def set_pt_id(pt_id, client_id):
+	query = 'UPDATE Clients SET pt_id=? WHERE client_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	success = False
+
+	try:
+		cursor.execute(query,(pt_id,client_id))
+		connection.commit()
+		success = True
+	except Exception as e:
+		print('Error', str(e))
+		connection.rollback()
+	cursor.close()
+	connection.close()
+
+	return success

@@ -3,8 +3,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 
-import utenti_dao, allenamenti_dao
-from models import User, PersonalTrainer, Client
+import utenti_dao, allenamenti_dao, schede_dao
+from models import PersonalTrainer, Client
 
 # create app
 app = Flask(__name__)
@@ -13,15 +13,22 @@ app.config['SECRET_KEY'] = 's3cr3t_v41u3'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# prova commit
 
 # Homepage
 @app.route('/')
 def index():
   allenamenti_db = allenamenti_dao.get_allenamenti()
-  # pts_db = utenti_dao.get_personal_trainers()
-  # print(pts_db.keys())
-  return render_template('index.html', allenamenti=allenamenti_db) #'''pts=pts_db'''
+  pts_db = utenti_dao.get_personal_trainers()
+  clienti_db = []
+  pt_id = 0
+
+  email = request.cookies.get('remember_token')
+  if email is not None:
+    email = email.split('|')[0]
+    pt_id = utenti_dao.get_pt_id_by_email(email)
+  if pt_id != 0:
+    clienti_db = utenti_dao.get_pt_clients(pt_id)
+  return render_template('index.html', allenamenti=allenamenti_db, pts=pts_db, clienti=clienti_db) 
 
 # define the about page
 @app.route('/about')
@@ -201,6 +208,54 @@ def modify_workout(id_allenamento):
 def delete_workout(id_allenamento):
   allenamenti_dao.delete_workout(id_allenamento)
   return redirect(url_for("pt_profile"))
+
+# define page for assuming a personal trainer
+@app.route("/assumi_pt/<int:pt_id>", methods=['POST'])
+def assumi_pt(pt_id):
+  email = request.cookies.get('remember_token').split('|')[0]
+  client_id = utenti_dao.get_client_id_by_email(email)
+  print("assumi_pt", email, client_id, pt_id)
+  utenti_dao.set_pt_id(pt_id, client_id)
+  return redirect(url_for("index"))
+
+# define page for schede
+@app.route("/schede")
+def schede():
+  client_id = request.args.get("client_id")
+  print("schede",client_id)
+  # vedi tutte le schede relative al client
+  schede = schede_dao.get_schede_by_client_id(client_id)
+  return render_template("schede.html",client_id=client_id,schede=schede)
+
+# define page to create schede
+@app.route("/create_scheda",methods=['GET','POST'])
+def create_scheda():
+  if request.method == 'POST':
+    ids = request.form.getlist("ids")
+    print(ids)
+    email = request.cookies.get('remember_token').split('|')[0]
+    pt_id = utenti_dao.get_pt_id_by_email(email)
+    client_id = request.form.get("client_id")
+
+    print("POST create_scheda client_id",client_id)
+    success = schede_dao.create_scheda(ids,pt_id,client_id)
+    if success:
+      return redirect(url_for("index"))
+    return redirect(url_for("create_scheda"))
+
+  else:
+    allenamenti_db = allenamenti_dao.get_allenamenti()
+    allenamenti = []
+    email = request.cookies.get('remember_token').split('|')[0]
+    pt_id = utenti_dao.get_pt_id_by_email(email)
+    client_id = request.args.get("client_id")
+    print("create_scheda",client_id)
+    # need to know client
+
+    for allenamento in allenamenti_db:
+      if allenamento['visibile'] == 1 or allenamento['pt_id'] == pt_id:
+        allenamenti.append(allenamento)
+    return render_template("create_scheda.html",allenamenti=allenamenti_db, client_id=client_id)
 
 # if __name__ == "__main__":
 #  app.run(host='0.0.0.0', port=3000, debug= True)

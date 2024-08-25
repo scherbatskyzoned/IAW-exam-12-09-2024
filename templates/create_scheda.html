@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %} Allenamenti {% endblock %}
+{% block content %}
+<a href="/schede">Torna indietro</a>
+	<div class="col-4 offset-md-4 bg-light p-4 border rounded">
+		<h4>Crea scheda</h4>
+		<form action="/create_scheda" method="POST">
+      <label class="form-label"><em>Seleziona allenamenti</em></label>
+			{% for allenamento in allenamenti %}
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="ids" value="{{allenamento.id_allenamento}}" id="flexCheckDefault">
+          <label class="form-check-label" for="flexCheckDefault">
+            {{allenamento.titolo}}
+            <!-- clicca per popup con info quali livello e descrizione -->
+          </label>
+        </div>
+      {% endfor %}
+      <input type="hidden" id="client_id" name="client_id" value="{{client_id}}"/>
+			<button type="submit" class="btn btn-primary mt-2">Crea</button>
+      <!-- se seleziono il testo dei vari cosi mi seleziona sempre il primo checkbox -->
+		</form>
+	</div>
+
+
+
+
+
+
+{% endblock %}

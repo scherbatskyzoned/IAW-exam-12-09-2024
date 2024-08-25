@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Schede{% endblock %}
+{% block content %}
+	<h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1>
+	{% if current_user.__class__.__name__ == "PersonalTrainer" %}
+		<form action="/create_scheda" method="get">
+			<input type="hidden" id="client_id" name="client_id" value="{{client_id}}" />
+			<button type="submit" class="btn btn-success">Crea scheda</button> 
+		</form>
+	{% endif %}
+	<ul class="list-group" id="lista">
+		<label for="lista"><em>Schede</em></label>
+		{% for scheda in schede %}
+			<div class="col-3 mb-3">
+				<div class="card" style="width: 18rem;">
+					<div class="card-body">
+						<h5 class="card-title">Scheda ID: {{scheda.id_scheda}}</h5>
+						<h6>Valutazione: {{scheda.rating}}</h6>
+						<!-- esercizi della scheda -->
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">An item</li>
+							<li class="list-group-item">A second item</li>
+							<li class="list-group-item">A third item</li>
+						</ul>
+						<!-- <a href="#" class="btn btn-success">Go somewhere</a> -->
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</ul>
+	
+{% endblock %}
