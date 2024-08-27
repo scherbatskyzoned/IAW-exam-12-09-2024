@@ -95,3 +95,94 @@ def get_allenamenti_ids_by_id_scheda(id_scheda):
 	connection.close()
 
 	return workout_ids_montassar
+
+
+def delete_scheda(id_scheda):
+	query = 'DELETE FROM CompostaDa WHERE id_scheda=?' 
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	success = False
+
+	try:
+		cursor.execute(query, (id_scheda,))
+		connection.commit()
+		success = True
+	except Exception as e:
+		print('Error', str(e))
+		connection.rollback()
+
+	query = 'DELETE FROM Schede WHERE id_scheda=?'
+	success = False
+
+	try:
+		cursor.execute(query, (id_scheda,))
+		connection.commit()
+		success = True
+	except Exception as e:
+		print('Error', str(e))
+		connection.rollback()
+
+	cursor.close()
+	connection.close()
+
+	return success
+
+
+def get_client_id_by_id_scheda(id_scheda):
+	query = 'SELECT client_id FROM Schede WHERE id_scheda = ?'
+
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	cursor.execute(query,(id_scheda,))
+	result = cursor.fetchone()
+	cursor.close()
+	connection.close()
+	if result is not None:
+		return result['client_id']
+	return None
+
+
+def get_scheda_by_id(id_scheda):
+	query = 'SELECT * FROM Schede WHERE id_scheda = ?'
+
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	cursor.execute(query,(id_scheda,))
+	result = cursor.fetchone()
+	cursor.close()
+	connection.close()
+	if result is not None:
+		return result
+	return None
+
+def update_scheda(scheda, ids):
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	success = False
+	# Rating to NULL or not??
+	query = 'UPDATE Schede SET titolo=?, obiettivo=? WHERE id_scheda=?'
+	query2 = 'DELETE FROM CompostaDa WHERE id_scheda=?'
+	
+	try:
+		cursor.execute(query, (scheda['titolo'], scheda['obiettivo'], scheda['id_scheda']))
+		cursor.execute(query2, (scheda['id_scheda'],))
+		connection.commit()
+		success = True
+		# print("SUCCESS")
+
+	except Exception as e:
+		print('Error', str(e))
+		connection.rollback()
+		# print("FAILURE")
+
+	cursor.close()
+	connection.close()
+
+	success = insert_allenamenti(scheda['id_scheda'],ids)
+
+	return success
+

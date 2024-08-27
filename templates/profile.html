@@ -3,7 +3,7 @@
 
 {% block content %}
 	<h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1>
-  <h2>La tua valutazione: {{current_user.rating}}/5</h2>
+  <h2>La tua valutazione: {% if current_user.rating == 0.0 %} <em>Nessuna valutazione</em> {% else %} {{'%.1f'%(current_user.rating)}}/5.0 {% endif %}</h2>
   
 	<div class="row">
 		<div class="col-6">
@@ -21,7 +21,7 @@
                 <button type="submit" class="btn btn-danger">Elimina</button> 
                 <!-- INLINE bottone -->
               </form>
-              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione}}</small></p>
+              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
             </div>
           </div>
         </div>
@@ -42,7 +42,7 @@
               <form action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
                 <button type="submit" class="btn btn-danger">Elimina</button>
               </form>
-              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione}}</small></p>
+              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
             </div>
           </div>
         </div>

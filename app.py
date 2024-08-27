@@ -29,7 +29,7 @@ def index():
     pt_id = utenti_dao.get_pt_id_by_email(email)
   if pt_id != 0:
     clienti_db = utenti_dao.get_pt_clients(pt_id)
-  return render_template('index.html', allenamenti=allenamenti_db, pts=pts_db, clienti=clienti_db) 
+  return render_template('index.html', datetime=datetime, allenamenti=allenamenti_db, pts=pts_db, clienti=clienti_db) 
 
 # define the about page
 @app.route('/about')
@@ -307,8 +307,68 @@ def update_rating():
     utenti_dao.update_pt_rating(pt_id, form_data['rating'], votoNuovo=False, oldRating=form_data['oldRating'])
   
   if success:
-    return redirect(url_for("schede"))
+    return redirect(url_for("schede",client_id=client['client_id'])) # passare client_id
   return redirect(url_for("index"))
+
+
+@app.route("/delete_scheda", methods=['POST'])
+def delete_scheda():
+  id_scheda = request.form.get("id_scheda")
+  if id_scheda is None:
+    app.logger.error('Il campo non può essere vuoto')
+    return redirect(url_for('index'))
+  
+  client_id = schede_dao.get_client_id_by_id_scheda(id_scheda)
+  schede_dao.delete_scheda(id_scheda)
+
+  return redirect (url_for("schede",client_id=client_id)) 
+
+@app.route("/modify_scheda/<int:id_scheda>", methods=['POST','GET'])
+def modify_scheda(id_scheda):
+  if request.method == 'POST':
+    client_id = schede_dao.get_client_id_by_id_scheda(id_scheda)
+    scheda = request.form.to_dict()
+    print(scheda)
+  
+    if scheda['titolo'] == '':
+        app.logger.error('Il campo non può essere vuoto')
+        return redirect(url_for('index'))
+      
+    if scheda['obiettivo'] == '':
+      app.logger.error('Il campo non può essere vuoto')
+      return redirect(url_for('index'))  
+
+    scheda['id_scheda'] = id_scheda
+    # GET ALLENAMENTI 
+    ids = request.form.getlist("ids")
+
+    print("modify scheda:", ids)
+
+    # success = allenamenti_dao.modifica_allenamento(workout)
+    success = schede_dao.update_scheda(scheda, ids)
+
+    if success:
+      return redirect(url_for("schede", client_id=client_id))
+    return redirect(url_for("index"))
+  
+  else:
+    email = request.cookies.get('remember_token').split('|')[0]
+    pt_id = utenti_dao.get_pt_id_by_email(email)
+
+    scheda = schede_dao.get_scheda_by_id(id_scheda)
+    allenamenti_ids = schede_dao.get_allenamenti_ids_by_id_scheda(id_scheda)
+    ids = [id['id_allenamento'] for id in allenamenti_ids]
+    selected = [allenamenti_dao.get_allenamento(id) for id in ids]
+
+
+    allenamenti_db = allenamenti_dao.get_allenamenti()
+    allenamenti=[]
+    for allenamento in allenamenti_db:
+      if allenamento['visibile'] == 1 or allenamento['pt_id'] == pt_id:
+        allenamenti.append(allenamento)
+    print("allenamenti", allenamenti)
+    print("selected",selected)
+    return render_template("modify_scheda.html", scheda=scheda,allenamenti=allenamenti,selected=selected)
 
 # if __name__ == "__main__":
 #  app.run(host='0.0.0.0', port=3000, debug= True)

@@ -27,7 +27,7 @@
               <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
               <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
               <!-- SISTEMA VISUALIZZAZIONE DATA -->
-              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione}}</small></p>
+              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
               <!-- <a href="#" class="btn btn-success">Go somewhere</a> -->
             </div>
           </div>
@@ -64,7 +64,7 @@
             <div class="card" style="width: 18rem;">
               <div class="card-body">
                 <h5 class="card-title">{{ pt.nome.capitalize() }} {{ pt.cognome.capitalize() }}</h5>
-                <p class="card-text">Valutazione dei clienti: {{ pt.rating }} </p>
+                <p class="card-text">Valutazione dei clienti:{% if pt.rating == 0.0 %} <em>Nessuna valutazione</em>{% else %} {{'%.1f'%(pt.rating)}}{% endif %}</p>
                 <p class="card-text">Numero di valutazioni: {{ pt.numOfRatings }} </p>
 								<form action="/assumi_pt/{{pt.pt_id}}" method="post">
 									<button type="submit" class="btn btn-success">Assumi</button> 

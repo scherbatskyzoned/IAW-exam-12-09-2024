@@ -12,7 +12,7 @@
 		<label for="lista"><em>Schede</em></label>
 		{% for scheda in schede %}
 			<!-- <div class="col-8 mb-3"> -->
-				<div class="card" style="width: 36rem;">
+				<div class="card mb-3" style="width: 36rem;">
 					<div class="card-body">
 						<h5 class="card-title">Scheda: {{scheda.titolo}}</h5>
 						<h6>Obiettivo: {{scheda.obiettivo}}</h6>
@@ -46,13 +46,21 @@
 							{% for workout in allenamenti[scheda.id_scheda]%}
 								<li class="list-group-item">
 									<h5>Esercizio #{{loop.index}}</h5>
-									<strong>Titolo:</strong> {{workout.titolo}} <br>
-									<strong>Livello:</strong> {{workout.livello.capitalize()}} <br>
-									<strong>Descrizione:</strong> {{workout.descrizione}}
+									<p><strong>Titolo:</strong> {{workout.titolo}}</p>
+									<p><strong>Livello:</strong> {{workout.livello.capitalize()}} </p>
+									<!-- <strong>Descrizione:</strong>  -->
+									<p>{{workout.descrizione}}</p>
 								</li>
 							{% endfor %}
 						</ul>
-						<!-- <a href="#" class="btn btn-success">Go somewhere</a> -->
+						{% if current_user.__class__.__name__ == "PersonalTrainer" %}
+
+							<a href="/modify_scheda/{{scheda.id_scheda}}" class="btn btn-success">Modifica</a>
+							<form action="/delete_scheda" method="post">
+								<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
+								<button type="submit" class="btn btn-danger">Elimina</button>
+							</form>
+						{% endif %}
 					</div>
 				</div>
 			<!-- </div> -->

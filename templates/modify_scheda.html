@@ -1,33 +1,32 @@
 {% extends "base.html" %}
 {% block title %} Schede {% endblock %}
 {% block content %}
-<!-- Problema! Dovrei inserire anche il client_id nel caso in cui sia un personal a
-     tornare indietro -->
+<!-- Problema! Dovrei inserire anche il client_id -->
 <a href="/schede">Torna indietro</a> 
 	<div class="col-4 offset-md-4 bg-light p-4 border rounded">
-		<h4>Crea scheda</h4>
-		<form action="/create_scheda" method="POST">
+		<h4>Modifica scheda</h4>
+		<form action="/modify_scheda/{{scheda.id_scheda}}" method="POST">
       <div class="mb-3">
 				<label for="titleInput" class="form-label">Titolo</label>
-				<input type="text" class="form-control" name="titolo" id="titleInput" required>
+				<input value="{{scheda.titolo}}" type="text" class="form-control" name="titolo" id="titleInput" required>
 			</div>
       <div class="mb-3">
 				<label for="obiettivoInput" class="form-label">Obiettivo</label>
-				<input type="text" class="form-control" name="obiettivo" id="obiettivoInput" required>
+				<input type="text" value="{{scheda.obiettivo}}" class="form-control" name="obiettivo" id="obiettivoInput" required>
 			</div>
       <label class="form-label"><em>Seleziona allenamenti</em></label>
 			{% for allenamento in allenamenti %}
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="ids" value="{{allenamento.id_allenamento}}" id="flexCheckDefault">
+          <!-- if esercizio in Scheda check the checkbox -->
+          <input class="form-check-input" type="checkbox" name="ids" value="{{allenamento.id_allenamento}}" id="flexCheckDefault" {% if allenamento in selected %} checked {% endif %}>
           <label class="form-check-label" for="flexCheckDefault">
             {{allenamento.titolo}}
             <!-- clicca per popup con info quali livello e descrizione -->
           </label>
         </div>
       {% endfor %}
-
-      <input type="hidden" id="client_id" name="client_id" value="{{client_id}}"/>
-			<button type="submit" class="btn btn-primary mt-2">Crea</button>
+      
+			<button type="submit" class="btn btn-primary mt-2">Modifica</button>
       <!-- se seleziono il testo dei vari cosi mi seleziona sempre il primo checkbox -->
 		</form>
 	</div>
