@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import date
+from datetime import datetime
 
 def create_allenamento(workout, pt_id):
 	connection = sqlite3.connect('db/personal.db')
@@ -7,7 +7,7 @@ def create_allenamento(workout, pt_id):
 	cursor = connection.cursor()
 	success = False
 	query = 'INSERT INTO Allenamenti(titolo,descrizione,livello,visibile,pt_id,data_creazione) VALUES (?,?,?,?,?,?)'
-	data = str(date.today())
+	data = str(datetime.now())
 	try:
 		# print("pt id", type(pt_id), "data", type(data))
 		cursor.execute(query, (workout['titolo'], workout['description'], workout['livello'], workout['visibile'], pt_id, data))
@@ -70,7 +70,6 @@ def modifica_allenamento(workout):
 	cursor.close()
 	connection.close()
 	return success
-
 
 def get_allenamenti_by_pt(pt_id):
 	query = 'SELECT * FROM Allenamenti WHERE pt_id=? ORDER BY data_creazione DESC'

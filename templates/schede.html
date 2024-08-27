@@ -11,21 +11,51 @@
 	<ul class="list-group" id="lista">
 		<label for="lista"><em>Schede</em></label>
 		{% for scheda in schede %}
-			<div class="col-3 mb-3">
-				<div class="card" style="width: 18rem;">
+			<!-- <div class="col-8 mb-3"> -->
+				<div class="card" style="width: 36rem;">
 					<div class="card-body">
-						<h5 class="card-title">Scheda ID: {{scheda.id_scheda}}</h5>
-						<h6>Valutazione: {{scheda.rating}}</h6>
+						<h5 class="card-title">Scheda: {{scheda.titolo}}</h5>
+						<h6>Obiettivo: {{scheda.obiettivo}}</h6>
+						<h6 class="d-inline">Valutazione:</h6> 
+						{% if current_user.__class__.__name__ == "Client" %}
+							<form action="/update_rating" method="post">
+								<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
+								<input type="hidden" id="oldRating" name="oldRating" value="{{scheda.rating}}"/>
+									<input type="radio" id="rating-1" name="rating" value="1" required {% if scheda.rating ==1 %}checked{% endif %}/>
+								<label for="rating-1">1</label>
+								<input type="radio" id="rating-2" name="rating" value="2" {% if scheda.rating ==2 %}checked{% endif %}/>
+								<label for="rating-2">2</label>
+								<input type="radio" id="rating-3" name="rating" value="3" {% if scheda.rating ==3 %}checked{% endif %} />
+								<label for="rating-3">3</label>
+								<input type="radio" id="rating-4" name="rating" value="4" {% if scheda.rating ==4 %}checked{% endif %}/>
+								<label for="rating-4">4</label>
+								<input type="radio" id="rating-5" name="rating" value="5" {% if scheda.rating ==5 %}checked{% endif %}/>
+								<label for="rating-5">5</label>
+								<button type="submit" class="btn btn-success">Valuta</button>
+							</form>
+						{% else %}
+							{% if scheda.rating is not none %}
+								{{scheda.rating}}/5
+							{% else %}
+								<em>Non valutato</em>
+							{% endif %}
+						{% endif %}
+
 						<!-- esercizi della scheda -->
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item">An item</li>
-							<li class="list-group-item">A second item</li>
-							<li class="list-group-item">A third item</li>
+							{% for workout in allenamenti[scheda.id_scheda]%}
+								<li class="list-group-item">
+									<h5>Esercizio #{{loop.index}}</h5>
+									<strong>Titolo:</strong> {{workout.titolo}} <br>
+									<strong>Livello:</strong> {{workout.livello.capitalize()}} <br>
+									<strong>Descrizione:</strong> {{workout.descrizione}}
+								</li>
+							{% endfor %}
 						</ul>
 						<!-- <a href="#" class="btn btn-success">Go somewhere</a> -->
 					</div>
 				</div>
-			</div>
+			<!-- </div> -->
 		{% endfor %}
 	</ul>
 	

@@ -74,6 +74,7 @@ def get_pt_id_by_email(user_email):
 		return default
 	return result['pt_id']
 
+
 def get_pt_clients(pt_id):
 	query = 'SELECT * FROM Clients WHERE pt_id = ?'
 	connection = sqlite3.connect('db/personal.db')
@@ -84,6 +85,7 @@ def get_pt_clients(pt_id):
 	cursor.close()
 	connection.close()
 	return clients
+
 
 def get_client_id_by_email(user_email):
 	query = 'SELECT client_id FROM Clients WHERE email = ?'
@@ -96,7 +98,9 @@ def get_client_id_by_email(user_email):
 	cursor.close()
 	connection.close()
 	# print(result['client_id'])
-	return result['client_id']
+	if result is not None:
+		return result['client_id']
+	return None
 
 # CONTROLLA SUCCESS
 def get_user_by_email(user_email):
@@ -105,11 +109,15 @@ def get_user_by_email(user_email):
 	query1 = 'SELECT * FROM PersonalTrainers WHERE email = ?'
 	query2 = 'SELECT * FROM Clients WHERE email = ?'
 
+	# query3 = 'SELECT * FROM PersonalTrainers, Clients WHERE PersonalTrainers.email = ? OR Clients.email = ?'
+
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 	print("utenti_dao email", user_email)
-	cursor.execute(query1,(user_email,)) # Personal Trainers
+
+	cursor.execute(query1,(user_email,))
+	# cursor.execute(query1,(user_email,)) # Personal Trainers
 	result = cursor.fetchone()
 	print("query 1:",result)
 
@@ -142,3 +150,44 @@ def set_pt_id(pt_id, client_id):
 	connection.close()
 
 	return success
+
+
+def update_pt_rating(pt_id, rating, votoNuovo, oldRating=0.0):
+	# need to get rating & #rating
+	query = 'SELECT rating, numOfRatings FROM PersonalTrainers WHERE pt_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	cursor.execute(query,(pt_id,))
+	result = cursor.fetchone()
+	cursor.close()
+	connection.close()
+	print("update pt rating:",result)
+
+	# CONTROLLA SE LA VALUTAZIONE è STATA MODIFICATA O E' UNA VALUTAZIONE NUOVA :C
+	old_media_rating=result['rating']
+	num=result['numOfRatings']
+	tmp = num*old_media_rating
+	# print("update pt rating:", tmp)
+	
+	if votoNuovo:
+		num+=1 # solo se nuova
+		new_rating=tmp+float(rating)
+	else:
+		new_rating=tmp+float(rating)-float(oldRating)
+		print(f'new_rating = {tmp} - {oldRating} + {float(rating)}')
+	
+	new_rating=new_rating/num
+	query='UPDATE PersonalTrainers SET rating=?, numOfRatings=? WHERE pt_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	try:
+		cursor.execute(query,(new_rating,num,pt_id))
+		connection.commit()
+	except Exception as e:
+		print('Error', str(e))
+		connection.rollback()
+
+	cursor.close()
+	connection.close()

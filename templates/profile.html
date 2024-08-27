@@ -3,6 +3,8 @@
 
 {% block content %}
 	<h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1>
+  <h2>La tua valutazione: {{current_user.rating}}/5</h2>
+  
 	<div class="row">
 		<div class="col-6">
 			<h2>Allenamenti pubblici</h2>
