@@ -22,6 +22,7 @@ def index():
   pts_db = utenti_dao.get_personal_trainers()
   clienti_db = []
   pt_id = 0
+  numOfSchede = {}
 
   email = request.cookies.get('remember_token')
   if email is not None:
@@ -29,7 +30,10 @@ def index():
     pt_id = utenti_dao.get_pt_id_by_email(email)
   if pt_id != 0:
     clienti_db = utenti_dao.get_pt_clients(pt_id)
-  return render_template('index.html', datetime=datetime, allenamenti=allenamenti_db, pts=pts_db, clienti=clienti_db) 
+    clienti_ids = [client['client_id'] for client in clienti_db]
+    for id in clienti_ids:
+      numOfSchede[id] = schede_dao.get_num_schede_by_client(id)[0]
+  return render_template('index.html', datetime=datetime, allenamenti=allenamenti_db, pts=pts_db, clienti=clienti_db, numOfSchede=numOfSchede) 
 
 # define the about page
 @app.route('/about')

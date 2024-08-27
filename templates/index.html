@@ -1,92 +1,147 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
+
+<!-- DA SISTEMARE GLI STILI E RENDERLI COMPATIBILIIII -->
+{% block style %}
+  {% if not current_user.is_authenticated %}
+    {{url_for('static', filename='styles.css')}}
+  {% else %}
+    {{url_for('static', filename='styles_personal.css')}}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
+{% if not current_user.is_authenticated %}
+<!-- Hero Section -->
+<section class="hero-section text-center text-white d-flex align-items-center justify-content-center">
+  <div class="container">
+      <h1 class="display-4">Benvenuto in GetFit</h1>
+      <p class="lead">Crea, gestisci e monitora le tue sessioni di allenamento con i migliori personal trainer.</p>
+      <a href="/signup" class="btn btn-primary btn-lg mt-4">Inizia Ora</a>
+  </div>
+</section>
 
-
-<main class="col">
-  <!-- vedi come fare qua -->
-  <section class="row justify-content-center"> 
-    {% if current_user.is_authenticated %}
-      <h2>Ciao {{ current_user.__class__.__name__ }} {{ current_user.nome.capitalize() }}!</h2>
-    {% endif %}
-    <div class="mx-auto">
-      <h1> GetFit | Il futuro del fitness!</h1>
+<!-- Features Section -->
+<section class="features-section py-5">
+<div class="container">
+  <div class="row text-center">
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="feature-box p-4 border rounded">
+        <i class="bi bi-person-fill display-4 text-primary"></i>
+        <h3 class="mt-3">Personal Trainer</h3>
+        <p>Crea e gestisci i tuoi allenamenti e segui i progressi dei tuoi clienti.</p>
+      </div>
     </div>
-    <img src="{{ url_for('static', filename='homepage.jpg') }}" class="img-fluid mb-3" alt="Foto principale della palestra">
-  </section>
-  
-  <div class="row">
-    {% if current_user.__class__.__name__ == "PersonalTrainer" %}
-      <h4>Allenamenti</h4>
-      {% for allenamento in allenamenti %}
-        {% if allenamento.visibile != 0 %}
-        <div class="col-3 mb-3">
-          <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">{{ allenamento.titolo }}</h5>
-              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
-              <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
-              <!-- SISTEMA VISUALIZZAZIONE DATA -->
-              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
-              <!-- <a href="#" class="btn btn-success">Go somewhere</a> -->
-            </div>
-          </div>
-        </div>
-        {% endif %}
-      {% endfor %}
-      <a href="/create_workout">
-        <!-- SISTEMARE BOTTONE -->
-        <button type="text" class="btn btn-primary" value="create_workout">Crea allenamento</button>
-      </a>
-			<div class="mt-3">
-				<h4>Clienti</h4>
-			</div>
-			<div class="col-5">
-				<ul class="list-group">
-				{% for cliente in clienti %}
-					<li class="list-group-item d-flex justify-content-between align-items-center">
-						<form action="/schede" method="get">
-							<input type="hidden" id="client_id" name="client_id" value="{{cliente.client_id}}" />
-							<button type="submit" class="btn btn-success">{{cliente.nome.capitalize()}} {{cliente.cognome.capitalize()}}</button> 
-							<span class="badge text-bg-primary rounded-pill">to-put-#schede</span>
-						</form>
-						<!-- <a href="/schede">{{cliente.nome.capitalize()}} {{cliente.cognome.capitalize()}}</a>
-						<span class="badge text-bg-primary rounded-pill">to-put-#schede</span> -->
-					</li>
-				{% endfor %}
-				</ul>
-			</div>
-    {% elif current_user.__class__.__name__ == "Client" %}
-      {% if current_user.pt_id is none %}
-        <h4>Personal trainer</h4>
-        {% for pt in pts %}
-          <div class="col-3 mb-3">
-            <div class="card" style="width: 18rem;">
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="feature-box p-4 border rounded">
+        <i class="bi bi-people-fill display-4 text-primary"></i>
+        <h3 class="mt-3">Clienti</h3>
+        <p>Trova il personal trainer giusto per te e inizia il tuo percorso di allenamento personalizzato.</p>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="feature-box p-4 border rounded">
+        <i class="bi bi-bar-chart-line-fill display-4 text-primary"></i>
+        <h3 class="mt-3">Progresso</h3>
+        <p>Monitora i tuoi miglioramenti con statistiche e feedback dettagliati.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+{% else %}
+<!-- Personal Trainer Homepage -->
+  {% if current_user.__class__.__name__ == "PersonalTrainer" %}
+    <!-- Hero Section -->
+    <section class="hero-section pt-5 pb-4 text-center text-white d-flex align-items-center justify-content-center">
+      <div class="container">
+        <h1 class="display-4">Benvenuto, {{current_user.nome.capitalize()}}</h1>
+        <p class="lead">Gestisci i tuoi allenamenti e clienti con facilità.</p>
+        <a href="/create_workout" class="btn btn-primary btn-lg mt-4">Crea un Nuovo Allenamento</a>
+      </div>
+    </section>
+
+    <!-- Public Workouts Section -->
+    <section class="public-workouts-section py-5">
+      <div class="container">
+        <h2 class="text-center mb-4">Allenamenti Pubblici</h2>
+        <div class="row">
+        {% for allenamento in allenamenti %}
+          {% if allenamento.visibile != 0 %}
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card">
               <div class="card-body">
-                <h5 class="card-title">{{ pt.nome.capitalize() }} {{ pt.cognome.capitalize() }}</h5>
-                <p class="card-text">Valutazione dei clienti:{% if pt.rating == 0.0 %} <em>Nessuna valutazione</em>{% else %} {{'%.1f'%(pt.rating)}}{% endif %}</p>
-                <p class="card-text">Numero di valutazioni: {{ pt.numOfRatings }} </p>
-								<form action="/assumi_pt/{{pt.pt_id}}" method="post">
-									<button type="submit" class="btn btn-success">Assumi</button> 
-									<!-- INLINE bottone -->
-								</form>
+                <h5 class="card-title">{{allenamento.titolo}}</h5>
+                <p class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</p>
+                <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
+                <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
               </div>
             </div>
           </div>
+          {% endif %}
         {% endfor %}
-      {% else %}
-        <h4><a href="/schede">Le mie schede</a></h4>
-      {% endif %}
-    {% endif %}
-  </div>
-
-
-
-  {% if not current_user.is_authenticated %}
-    <section class="row mt-4">
-      <a href="/signup">
-      <button type="text" class="btn btn-primary btn-lg" value="Registrati ora">REGISTRATI ORA</button></a>
+        </div>
+      </div>
     </section>
-  {% endif %}  
-</main>
+
+    <!-- Clients Section -->
+    <section class="clients-section py-5 bg-light">
+      <div class="container">
+        <h2 class="text-center mb-4">I Tuoi Clienti</h2>
+        <div class="row">
+          {% for cliente in clienti %}
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{cliente.nome.capitalize()}} {{cliente.cognome.capitalize()}}</h5>
+                <p class="card-text">Schede di Allenamento: {{ numOfSchede[cliente.client_id]}}</p>
+                <form action="/schede" method="get">
+                  <input type="hidden" id="client_id" name="client_id" value="{{cliente.client_id}}" />
+                  <button type="submit" class="btn btn-primary">Visualizza schede</button> 
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% else %}
+  <!-- Client Homepage -->
+  <!-- Hero Section -->
+  <section class="hero-section pt-5 pb-4 text-center text-white d-flex align-items-center justify-content-center">
+    <div class="container">
+        <h1 class="display-4">Benvenuto, {{current_user.nome.capitalize()}}</h1>
+        <p class="lead">Trova il tuo personal trainer e inizia il tuo percorso di allenamento.</p>
+        <a href="/schede" class="btn btn-primary mt-3">Visualizza le Tue Schede</a>
+    </div>
+  </section>
+
+    {% if current_user.pt_id is none %}
+      <!-- Available Trainers Section -->
+      <section class="trainers-section py-5">
+        <div class="container">
+          <h2 class="text-center mb-4">Personal Trainer Disponibili</h2>
+          <div class="row">
+            {% for pt in pts %}
+              <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">{{pt.nome.capitalize()}} {{pt.cognome.capitalize()}}</h5>
+                    <p class="card-text">Valutazione: {% if pt.rating == 0.0 %} <em>Nessuna valutazione</em>{% else %} {{'%.1f'%(pt.rating)}}{% endif %}</p>
+                    <form action="/assumi_pt/{{pt.pt_id}}" method="post">
+                      <button type="submit" class="btn btn-primary">Assumi</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+  {% endif %}
+  
+{% endif %}
 {% endblock %}

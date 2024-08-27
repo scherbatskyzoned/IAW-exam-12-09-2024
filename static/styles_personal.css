@@ -1,0 +1,25 @@
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.hero-section {
+  background-color: #2F4F4F;
+  color: white;
+  padding: 60px 0;
+}
+
+.public-workouts-section {
+  background-color: #f8f9fa;
+}
+
+.card {
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+footer {
+  background-color: #f8f9fa;
+}

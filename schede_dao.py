@@ -186,3 +186,14 @@ def update_scheda(scheda, ids):
 
 	return success
 
+def get_num_schede_by_client(client_id):
+	query = 'SELECT COUNT(*) FROM Schede WHERE client_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+	cursor.execute(query,(client_id,))
+	result = cursor.fetchone()
+	cursor.close()
+	connection.close()
+	
+	return result
