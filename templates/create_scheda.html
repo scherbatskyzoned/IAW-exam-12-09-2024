@@ -1,39 +1,30 @@
 {% extends "base.html" %}
 {% block title %} Schede {% endblock %}
+{% block style %} {{url_for('static', filename='login_style.css')}} {% endblock %}
 {% block content %}
-<!-- Problema! Dovrei inserire anche il client_id nel caso in cui sia un personal a
-     tornare indietro -->
-	<div class="col-4 offset-md-4 bg-light p-4 border rounded mb-3 mt-3">
-		<h4>Crea scheda</h4>
-		<form action="/create_scheda" method="POST">
-      <div class="mb-3">
-				<label for="titleInput" class="form-label">Titolo</label>
-				<input type="text" class="form-control" name="titolo" id="titleInput" required>
-			</div>
-      <div class="mb-3">
-				<label for="obiettivoInput" class="form-label">Obiettivo</label>
-				<input type="text" class="form-control" name="obiettivo" id="obiettivoInput" required>
-			</div>
-      <label class="form-label"><em>Seleziona allenamenti</em></label>
-			{% for allenamento in allenamenti %}
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="ids" value="{{allenamento.id_allenamento}}" id="flexCheckDefault">
-          <label class="form-check-label" for="flexCheckDefault">
-            {{allenamento.titolo}}
-            <!-- clicca per popup con info quali livello e descrizione -->
-          </label>
-        </div>
-      {% endfor %}
-
-      <input type="hidden" id="client_id" name="client_id" value="{{client_id}}"/>
-			<button type="submit" class="btn btn-primary mt-2">Crea</button>
-      <!-- se seleziono il testo dei vari cosi mi seleziona sempre il primo checkbox -->
-		</form>
-	</div>
-
-
-
-
-
-
+<div class="login-container mt-3 mb-3">
+	<h2>Crea Scheda</h2>
+	<form  action="/create_scheda" method="POST">
+		<div class="mb-3">
+      <label for="titleInput" class="form-label">Titolo</label>
+      <input type="text" class="form-control" name="titolo" id="titleInput" required>
+    </div>
+    <div class="mb-3">
+      <label for="obiettivoInput" class="form-label">Obiettivo</label>
+      <input type="text" class="form-control" name="obiettivo" id="obiettivoInput" required>
+    </div>
+    <label class="form-label">Seleziona allenamenti</label>
+    {% for allenamento in allenamenti %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="ids" value="{{allenamento.id_allenamento}}" id="flexCheck{{loop.index}}">
+        <label class="form-check-label" for="flexCheck{{loop.index}}">
+          {{allenamento.titolo}}
+          <!-- clicca per popup con info quali livello e descrizione -->
+        </label>
+      </div>
+    {% endfor %}
+    <input type="hidden" id="client_id" name="client_id" value="{{client_id}}"/>
+		<button type="submit" class="btn btn-primary mt-2">Crea</button>
+	</form>
+</div>
 {% endblock %}

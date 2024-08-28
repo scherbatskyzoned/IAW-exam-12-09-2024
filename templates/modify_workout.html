@@ -1,17 +1,14 @@
 {% extends "base.html" %}
 {% block title %} Allenamenti {% endblock %}
+{% block style %} {{url_for('static', filename='login_style.css')}} {% endblock %}
 {% block content %}
-<div class="col-4 offset-md-4 bg-light p-4 border rounded mt-3 mb-3">
-	<h4>Modifica allenamento</h4>
-	<form action="/modify_workout/{{allenamento.id_allenamento}}" method="POST">
+<div class="login-container mt-3 mb-3">
+	<h2>Modifica Allenamento</h2>
+	<form  action="/modify_workout/{{allenamento.id_allenamento}}" method="POST">
 		<div class="mb-3">
 			<label for="titleInput" class="form-label">Titolo</label>
 			<input value="{{allenamento.titolo}}" type="text" class="form-control" name="titolo" id="titleInput" required>
 		</div>
-		<!-- <div class="mb-3">
-			<label for="descInput" class="form-label">Descrizione</label>
-			<input type="text" value="{{allenamento.descrizione}}" class="form-control" name="description" id="descInput" required>
-		</div> -->
 		<div class="mb-3">
 			<label for="FormControlTextarea" class="form-label">Descrizione</label>
 			<textarea name="description" class="form-control" id="FormControlTextarea" rows="5" required>{{allenamento.descrizione}}</textarea>
@@ -32,4 +29,5 @@
 		<button type="submit" class="btn btn-primary">Modifica</button>
 	</form>
 </div>
+
 {% endblock %}

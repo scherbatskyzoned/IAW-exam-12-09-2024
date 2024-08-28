@@ -10,14 +10,11 @@ body {
 }
 
 #background-homepage{
-  /* Da sistemare */
   background-color:#2F4F4F;
-  /* border-radius: 10%; */
   border-style: double;
   border-width: medium;
   padding:5px;
   line-height: 2;
-  /* border-color: #112a2a; */
 }
 
 .feature-box {
@@ -30,15 +27,4 @@ body {
 
 footer {
   background-color: #f8f9fa;
-  /* position: fixed;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  height: 60px;
-  line-height: 60px; */
 }
-
-/* .content {
-  position: relative;
-  height: 100vh;
-} */

@@ -8,12 +8,22 @@ body {
   padding: 60px 0;
 }
 
+.header-section {
+  text-align: center;
+}
+
 .card {
   transition: transform 0.3s;
 }
 
 .card:hover {
   transform: translateY(-5px);
+}
+
+.btn-group-action {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 footer {

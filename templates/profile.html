@@ -6,7 +6,7 @@
   <h2>La tua valutazione: {% if current_user.rating == 0.0 %} <em>Nessuna valutazione</em> {% else %} {{'%.1f'%(current_user.rating)}}/5.0 {% endif %}</h2> -->
   
   <!-- Profile Header -->
-  <section class="profile-header py-5">
+  <section class="profile-header pt-5">
     <div class="container">
       <h1 class="mb-3">{{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}</h1>
       <div class="rating-stars mb-3">

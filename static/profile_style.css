@@ -1,3 +1,7 @@
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
 .profile-header {
   text-align: center;
   margin-bottom: 50px;

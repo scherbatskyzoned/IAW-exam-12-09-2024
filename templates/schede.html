@@ -4,16 +4,22 @@
 {% block content %}
 	<!-- <h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1> -->
 	{% if current_user.__class__.__name__ == "PersonalTrainer" %}
-		<form action="/create_scheda" method="get">
-			<input type="hidden" id="client_id" name="client_id" value="{{client_id}}" />
-			<button type="submit" class="btn btn-success">Crea scheda</button> 
-		</form>
+		<section class="header-section mt-3">
+			<div class="container">
+				<h1 class="mb-3">Schede di Allenamento</h1>
+				<p class="lead">Qui puoi creare nuove schede e gestire quelle già esistenti.</p>
+				<form action="/create_scheda" method="get">
+					<input type="hidden" id="client_id" name="client_id" value="{{client_id}}" />
+					<button type="submit" class="btn btn-primary">Crea Nuova Scheda</button> 
+				</form>
+			</div>
+		</section>
 	{% endif %}
 	<ul class="list-group" id="lista">
 		<!-- Workout Plans Section -->
     <section class="workout-plans-section py-5">
 			<div class="container">
-				<h2 class="text-center mb-4">Le Tue Schede di Allenamento</h2>
+				<!-- <h2 class="text-center mb-4">Le Tue Schede di Allenamento</h2> -->
 				
 				{% for scheda in schede %}
 				<div class="row">
@@ -27,7 +33,7 @@
 									{% for workout in allenamenti[scheda.id_scheda]%}
 										<li class="list-group-item">
 											<!-- <h5>Esercizio #{{loop.index}}</h5> -->
-											 <h6 class="card-title">Esercizio #{{loop.index}}</h6>
+											 <h6 class="card-title"><strong>Esercizio #{{loop.index}}</strong></h6>
 											<p class="card-text"><strong>Titolo:</strong> {{workout.titolo}}</p>
 											<p class="card-text"><strong>Livello:</strong> {{workout.livello.capitalize()}} </p>
 											<!-- <strong>Descrizione:</strong>  -->
@@ -54,16 +60,18 @@
 								{% else %}
 									<p class="card-text d-inline mb-5"><strong>Valutazione:</strong> </p>
 									{% if scheda.rating is not none %}
-										{{scheda.rating}}/5
+										{{scheda.rating}} su 5
 									{% else %}
 										<em>Non valutato</em>
 									{% endif %}
 									<br>
-									<a href="/modify_scheda/{{scheda.id_scheda}}" class="btn btn-primary">Modifica</a>
-									<form action="/delete_scheda" method="post" class="d-inline">
-										<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
-										<button type="submit" class="btn btn-danger">Elimina</button>
-									</form>
+									<div class="btn-group-action">
+										<a href="/modify_scheda/{{scheda.id_scheda}}" class="btn btn-primary">Modifica</a>
+										<form action="/delete_scheda" method="post" class="d-inline">
+											<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
+											<button type="submit" class="btn btn-danger">Elimina</button>
+										</form>
+									</div>
 								{% endif %}
 							</div>
 						</div>

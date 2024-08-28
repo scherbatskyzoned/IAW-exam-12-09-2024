@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
-<!-- DA SISTEMARE GLI STILI E RENDERLI COMPATIBILIIII -->
 {% block style %}
   {% if not current_user.is_authenticated %}
     {{url_for('static', filename='style_homepage.css')}}
@@ -118,7 +117,9 @@
     <div class="container">
         <h1 class="display-4">Benvenuto, {{current_user.nome.capitalize()}}</h1>
         <p class="lead">Trova il tuo personal trainer e inizia il tuo percorso di allenamento.</p>
-        <a href="/schede" class="btn btn-primary mt-3">Visualizza le Tue Schede</a>
+        {% if current_user.pt_id is not none %}
+          <a href="/schede" class="btn btn-primary mt-3">Visualizza le Tue Schede</a>
+        {% endif %}
     </div>
   </section>
 
