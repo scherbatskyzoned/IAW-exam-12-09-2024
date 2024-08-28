@@ -9,7 +9,6 @@ def create_allenamento(workout, pt_id):
 	query = 'INSERT INTO Allenamenti(titolo,descrizione,livello,visibile,pt_id,data_creazione) VALUES (?,?,?,?,?,?)'
 	data = str(datetime.now())
 	try:
-		# print("pt id", type(pt_id), "data", type(data))
 		cursor.execute(query, (workout['titolo'], workout['description'], workout['livello'], workout['visibile'], pt_id, data))
 		connection.commit()
 		success = True
@@ -37,6 +36,7 @@ def get_allenamenti():
 
 	return result
 
+
 def get_allenamento(id_allenamento):
 	query = 'SELECT * FROM Allenamenti WHERE id_allenamento=?'
 	connection = sqlite3.connect('db/personal.db')
@@ -52,18 +52,23 @@ def get_allenamento(id_allenamento):
 
 	return result
 
+
 def modifica_allenamento(workout):
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 	success = False
-
-	query = 'UPDATE Allenamenti SET titolo=?,descrizione=?,livello=?,visibile=? WHERE id_allenamento = ?'
+	# Verifica che allenamento non sia presente in nessuna scheda
+	query1 = 'SELECT COUNT(*) FROM CompostaDa WHERE id_allenamento=?'
+	query2 = 'UPDATE Allenamenti SET titolo=?,descrizione=?,livello=?,visibile=? WHERE id_allenamento = ?'
 
 	try:
-		cursor.execute(query, (workout['titolo'], workout['description'], workout['livello'], workout['visibile'], workout['id_allenamento']))
-		connection.commit()
-		success = True
+		cursor.execute(query1, (workout['id_allenamento'],))
+		count = cursor.fetchone()[0]
+		if count == 0:
+			cursor.execute(query2, (workout['titolo'], workout['description'], workout['livello'], workout['visibile'], workout['id_allenamento']))
+			connection.commit()
+			success = True
 	except Exception as e:
 		print('Error', str(e))
 		connection.rollback()
@@ -89,16 +94,21 @@ def get_allenamenti_by_pt(pt_id):
 
 
 def delete_workout(id_allenamento):
-	query = 'DELETE FROM Allenamenti WHERE id_allenamento=?'
+	query1 = 'SELECT COUNT(*) FROM CompostaDa WHERE id_allenamento=?'
+	query2 = 'DELETE FROM Allenamenti WHERE id_allenamento=?'
+
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 	success = False
 
 	try:
-		cursor.execute(query, (id_allenamento,))
-		connection.commit()
-		success = True
+		cursor.execute(query1, (id_allenamento,))
+		count = cursor.fetchone()[0]
+		if count == 0:
+			cursor.execute(query2, (id_allenamento,))
+			connection.commit()
+			success = True
 	except Exception as e:
 		print('Error', str(e))
 		connection.rollback()

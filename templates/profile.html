@@ -9,16 +9,32 @@
   <section class="profile-header pt-5">
     <div class="container">
       <h1 class="mb-3">{{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}</h1>
-      <div class="rating-stars mb-3">
-        <!-- Visualizzazione del rating complessivo -->
+      <div class="d-flex align-items-center justify-content-center">
+        <p id="p-rating"><strong>Valutazione:</strong></p>
+        {% if current_user.rating != 0.0 %}
+          <div class="rating">
+            <span class="{% if current_user.rating > 0.5 %}star-full{% else %}star-empty{% endif %}">{% if current_user.rating > 0.5 %}★{% else %}☆{% endif %}</span>
+            <span class="{% if current_user.rating > 1.5 %}star-full{% else %}star-empty{% endif %}">{% if current_user.rating > 1.5 %}★{% else %}☆{% endif %}</span>
+            <span class="{% if current_user.rating > 2.5 %}star-full{% else %}star-empty{% endif %}">{% if current_user.rating > 2.5 %}★{% else %}☆{% endif %}</span>
+            <span class="{% if current_user.rating > 3.5 %}star-full{% else %}star-empty{% endif %}">{% if current_user.rating > 3.5 %}★{% else %}☆{% endif %}</span>
+            <span class="{% if current_user.rating > 4.5 %}star-full{% else %}star-empty{% endif %}">{% if current_user.rating > 4.5 %}★{% else %}☆{% endif %}</span>
+          </div>
+        {% else %}
+          <em>Non valutato</em>
+        {% endif %}
+      </div>
+
+<!--  -->
+      <!-- <div class="rating-stars mb-3">
+        Visualizzazione del rating complessivo
         <i class="{% if current_user.rating >= 0.5 %} fas {% else %} far {% endif %} fa-star"></i>
         <i class="{% if current_user.rating >= 1.5 %} fas {% else %} far {% endif %} fa-star"></i>
         <i class="{% if current_user.rating >= 2.5 %} fas {% else %} far {% endif %} fa-star"></i>
         <i class="{% if current_user.rating >= 3.5 %} fas {% else %} far {% endif %} fa-star"></i>
-        <!-- fa-star-half-alt -->
+        fa-star-half-alt
         <i class="{% if current_user.rating >= 4.5 %} fas {% else %} far {% endif %} fa-star"></i>
         <span class="ms-2">({{'%.1f'%(current_user.rating)}} su 5)</span>
-      </div>
+      </div> -->
     </div>
   </section>
 

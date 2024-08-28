@@ -1,53 +1,93 @@
 import sqlite3
 
-# used when signing up a personal trainer
+def get_email(request):
+	try:
+		return request.cookies.get('remember_token').split('|')[0]
+	except Exception as e:
+		return None
+
+
+def get_full_name_client(id):
+	query = 'SELECT nome, cognome FROM Clients WHERE client_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+
+	cursor.execute(query,(id,))
+	full_name = cursor.fetchone()
+	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
+
+
+def get_full_name_pt(id):
+	query = 'SELECT nome, cognome FROM PersonalTrainers WHERE pt_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+
+	cursor.execute(query,(id,))
+	full_name = cursor.fetchone()
+	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
+
+
+# Creates Personal Trainer
 #
 def create_pt(user):
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 	success = False
-	# TO CHECK EMAIL IN CLIENTS
-	query = "INSERT INTO PersonalTrainers(nome,cognome,email,password,rating,numOfRatings) VALUES (?,?,?,?,0.0,0)"
+
+	query1 = 'SELECT COUNT(*) FROM Clients WHERE email=?'
+	query2 = 'INSERT INTO PersonalTrainers(nome,cognome,email,password,rating,numOfRatings) VALUES (?,?,?,?,0.0,0)'
 	try:
-		cursor.execute(query, (user['name'], user['surname'], user['email'], user['password']))
-		connection.commit()
-		success = True
+		cursor.execute(query1, (user['email'],))
+		count = cursor.fetchone()[0]
+		# Check if email is already used in a client's account
+		if count == 0:
+			cursor.execute(query2, (user['name'], user['surname'], user['email'], user['password']))
+			connection.commit()
+			success = True
+
 	except Exception as e:
 		print('Error', str(e))
 		connection.rollback()
+
 	cursor.close()
 	connection.close()
 	return success
 
-# Used when signign up a client
+# Creates Client
 #
 def create_client(user):
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 	success = False
-	# TO CHECK EMAIL IN PTS
-	query = "INSERT INTO Clients(nome,cognome,email,password,pt_id) VALUES (?,?,?,?,NULL)"
+	
+	query1 = 'SELECT COUNT(*) FROM PersonalTrainers WHERE email=?'
+	query2 = 'INSERT INTO Clients(nome,cognome,email,password,pt_id) VALUES (?,?,?,?,NULL)'
 	try:
-		cursor.execute(query, (user['name'], user['surname'], user['email'],  user['password']))
-		connection.commit()
-		success = True
+		cursor.execute(query1, (user['email'],))
+		count = cursor.fetchone()[0]
+		# Check if email is already used in a personal trainer's account
+		if count == 0:
+			cursor.execute(query2, (user['name'], user['surname'], user['email'],  user['password']))
+			connection.commit()
+			success = True
 	except Exception as e:
 		print('Error', str(e))
 		connection.rollback()
+
 	cursor.close()
 	connection.close()
 	return success
 
 
 def get_personal_trainers():
-	query = 'SELECT * FROM PersonalTrainers'
-
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
-
+	query = 'SELECT * FROM PersonalTrainers'
 	cursor.execute(query)
 
 	result = cursor.fetchall()
@@ -58,21 +98,24 @@ def get_personal_trainers():
 	return result
 
 
-def get_pt_id_by_email(user_email):
-	default = 0
-	query = 'SELECT pt_id FROM PersonalTrainers WHERE email = ?'
-
+def get_user_id_by_email(user_email):
+	query1 = 'SELECT pt_id FROM PersonalTrainers WHERE email = ?'
+	query2 = 'SELECT client_id FROM Clients WHERE email = ?'
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
-	cursor.execute(query,(user_email,))
+
+	cursor.execute(query1,(user_email,))	
 	result = cursor.fetchone()
+	if result is None:
+		cursor.execute(query2, (user_email,))
+		result = cursor.fetchone()
+
 	cursor.close()
 	connection.close()
-	# print(result['pt_id'])
-	if result is None:
-		return default
-	return result['pt_id']
+
+	# print("qwjilqwelel",result[0])
+	return result[0]
 
 
 def get_pt_clients(pt_id):
@@ -87,49 +130,28 @@ def get_pt_clients(pt_id):
 	return clients
 
 
-def get_client_id_by_email(user_email):
-	query = 'SELECT client_id FROM Clients WHERE email = ?'
-
-	connection = sqlite3.connect('db/personal.db')
-	connection.row_factory = sqlite3.Row
-	cursor = connection.cursor()
-	cursor.execute(query,(user_email,))
-	result = cursor.fetchone()
-	cursor.close()
-	connection.close()
-	# print(result['client_id'])
-	if result is not None:
-		return result['client_id']
-	return None
-
-# CONTROLLA SUCCESS
 def get_user_by_email(user_email):
 	type = 0 # 0: personal_trainer, 1: client
-	# try using only 1 query, 2 tables in query
 	query1 = 'SELECT * FROM PersonalTrainers WHERE email = ?'
 	query2 = 'SELECT * FROM Clients WHERE email = ?'
 
-	# query3 = 'SELECT * FROM PersonalTrainers, Clients WHERE PersonalTrainers.email = ? OR Clients.email = ?'
-
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
-	print("utenti_dao email", user_email)
 
 	cursor.execute(query1,(user_email,))
-	# cursor.execute(query1,(user_email,)) # Personal Trainers
-	result = cursor.fetchone()
-	print("query 1:",result)
+	user = cursor.fetchone()
+	print("query 1:",user)
 
-	if result is None:
+	if user is None:
 		cursor.execute(query2, (user_email,)) # Clients
-		result = cursor.fetchone()
-		print("query 2:", result)
+		user = cursor.fetchone()
+		print("query 2:", user)
 		type = 1
 	
 	cursor.close()
 	connection.close()
-	return result, type
+	return user, type
 
 
 def set_pt_id(pt_id, client_id):
@@ -153,7 +175,6 @@ def set_pt_id(pt_id, client_id):
 
 
 def update_pt_rating(pt_id, rating, votoNuovo, oldRating=0.0):
-	# need to get rating & #rating
 	query = 'SELECT rating, numOfRatings FROM PersonalTrainers WHERE pt_id=?'
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
@@ -164,11 +185,9 @@ def update_pt_rating(pt_id, rating, votoNuovo, oldRating=0.0):
 	connection.close()
 	print("update pt rating:",result)
 
-	# CONTROLLA SE LA VALUTAZIONE è STATA MODIFICATA O E' UNA VALUTAZIONE NUOVA :C
 	old_media_rating=result['rating']
 	num=result['numOfRatings']
 	tmp = num*old_media_rating
-	# print("update pt rating:", tmp)
 	
 	if votoNuovo:
 		num+=1 # solo se nuova
