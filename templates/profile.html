@@ -1,53 +1,78 @@
 {% extends "base.html" %}
 {% block title %}Profilo{% endblock %}
-
+{% block style %} {{url_for('static', filename='profile_style.css')}} {% endblock %}
 {% block content %}
-	<h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1>
-  <h2>La tua valutazione: {% if current_user.rating == 0.0 %} <em>Nessuna valutazione</em> {% else %} {{'%.1f'%(current_user.rating)}}/5.0 {% endif %}</h2>
+	<!-- <h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1>
+  <h2>La tua valutazione: {% if current_user.rating == 0.0 %} <em>Nessuna valutazione</em> {% else %} {{'%.1f'%(current_user.rating)}}/5.0 {% endif %}</h2> -->
   
-	<div class="row">
-		<div class="col-6">
-			<h2>Allenamenti pubblici</h2>
-			{% for allenamento in allenamenti %}
-        {% if allenamento.visibile != 0 %}
-        <div class="col-3 mb-3">
-          <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">{{ allenamento.titolo }}</h5>
-              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
-              <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
-              <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-success">Modifica</a>
-              <form action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
-                <button type="submit" class="btn btn-danger">Elimina</button> 
-                <!-- INLINE bottone -->
-              </form>
-              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
+  <!-- Profile Header -->
+  <section class="profile-header py-5">
+    <div class="container">
+      <h1 class="mb-3">{{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}</h1>
+      <div class="rating-stars mb-3">
+        <!-- Visualizzazione del rating complessivo -->
+        <i class="{% if current_user.rating >= 0.5 %} fas {% else %} far {% endif %} fa-star"></i>
+        <i class="{% if current_user.rating >= 1.5 %} fas {% else %} far {% endif %} fa-star"></i>
+        <i class="{% if current_user.rating >= 2.5 %} fas {% else %} far {% endif %} fa-star"></i>
+        <i class="{% if current_user.rating >= 3.5 %} fas {% else %} far {% endif %} fa-star"></i>
+        <!-- fa-star-half-alt -->
+        <i class="{% if current_user.rating >= 4.5 %} fas {% else %} far {% endif %} fa-star"></i>
+        <span class="ms-2">({{'%.1f'%(current_user.rating)}} su 5)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Public Workouts -->
+  <section class="workouts-section">
+    <div class="container">
+      <h2 class="mb-4">Allenamenti Pubblici</h2>
+      <div class="row">
+        {% for allenamento in allenamenti %}
+          {% if allenamento.visibile != 0 %}
+            <div class="col-lg-4 col-md-6 workout-card">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ allenamento.titolo }}</h5>
+                  <p class="card-subtitle text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</p>
+                  <p class="card-text">{{allenamento.descrizione}}</p>
+                  <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
+                  <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
+                    <button type="submit" class="btn btn-danger">Elimina</button> 
+                  </form>
+                  <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        {% endif %}
-      {% endfor %}
-		</div>
-		<div class="col-6">
-			<h2>Allenamenti privati</h2>
-			{% for allenamento in allenamenti %}
-        {% if allenamento.visibile == 0 %}
-        <div class="col-3 mb-3">
-          <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">{{ allenamento.titolo }}</h5>
-              <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
-              <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
-              <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-success">Modifica</a>
-              <form action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
-                <button type="submit" class="btn btn-danger">Elimina</button>
-              </form>
-              <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Private Workouts -->
+  <section class="workouts-section">
+    <div class="container">
+      <h2 class="mb-4">Allenamenti Privati</h2>
+      <div class="row">
+        {% for allenamento in allenamenti %}
+          {% if allenamento.visibile == 0 %}
+            <div class="col-lg-4 col-md-6 workout-card">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ allenamento.titolo }}</h5>
+                  <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
+                  <p class="card-text">{{allenamento.descrizione}}</p>
+                  <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
+                  <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
+                    <button type="submit" class="btn btn-danger">Elimina</button> 
+                  </form>
+                  <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        {% endif %}
-      {% endfor %}
-		</div>
-	</div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
 {% endblock %}

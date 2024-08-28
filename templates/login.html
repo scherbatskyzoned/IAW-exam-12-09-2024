@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Accedi{% endblock %}
-
+{% block style %} {{url_for('static', filename='style_footer.css')}} {% endblock %}
 {% block content %} 
-	<div class="col-4 offset-md-4 bg-light p-4 border rounded">
+	<div class="col-4 offset-md-4 bg-light p-4 border rounded mt-3 mb-3">
 		<form action="/login" method="POST">
 			<div class="mb-3">
 				<label for="emailInput" class="form-label">Email</label>

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block title %} Allenamenti {% endblock %}
 {% block content %}
-<a href="/">Torna indietro</a>
-	<div class="col-4 offset-md-4 bg-light p-4 border rounded">
+	<div class="col-4 offset-md-4 bg-light p-4 border rounded mt-3 mb-3">
 		<h4>Crea allenamento</h4>
 		<form action="/create_workout" method="POST">
 			<div class="mb-3">
@@ -11,7 +10,7 @@
 			</div>
 			<div class="mb-3">
         <label for="FormControlTextarea" class="form-label">Descrizione</label>
-        <textarea name="description" class="form-control" id="FormControlTextarea" rows="3" required></textarea>
+        <textarea name="description" class="form-control" id="FormControlTextarea" rows="5" required></textarea>
       </div>
 			<!-- <div class="mb-3">
 				<label for="descInput" class="form-label">Descrizione</label>

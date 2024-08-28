@@ -2,8 +2,7 @@
 {% block title %} Schede {% endblock %}
 {% block content %}
 <!-- Problema! Dovrei inserire anche il client_id -->
-<a href="/schede">Torna indietro</a> 
-	<div class="col-4 offset-md-4 bg-light p-4 border rounded">
+	<div class="col-4 offset-md-4 bg-light p-4 border rounded mt-3 mb-3">
 		<h4>Modifica scheda</h4>
 		<form action="/modify_scheda/{{scheda.id_scheda}}" method="POST">
       <div class="mb-3">

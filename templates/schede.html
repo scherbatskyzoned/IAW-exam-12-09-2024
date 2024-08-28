@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Schede{% endblock %}
+{% block style %} {{url_for('static', filename='styles_schede.css')}} {% endblock %}
 {% block content %}
-	<h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1>
+	<!-- <h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1> -->
 	{% if current_user.__class__.__name__ == "PersonalTrainer" %}
 		<form action="/create_scheda" method="get">
 			<input type="hidden" id="client_id" name="client_id" value="{{client_id}}" />
@@ -9,62 +10,67 @@
 		</form>
 	{% endif %}
 	<ul class="list-group" id="lista">
-		<label for="lista"><em>Schede</em></label>
-		{% for scheda in schede %}
-			<!-- <div class="col-8 mb-3"> -->
-				<div class="card mb-3" style="width: 36rem;">
-					<div class="card-body">
-						<h5 class="card-title">Scheda: {{scheda.titolo}}</h5>
-						<h6>Obiettivo: {{scheda.obiettivo}}</h6>
-						<h6 class="d-inline">Valutazione:</h6> 
-						{% if current_user.__class__.__name__ == "Client" %}
-							<form action="/update_rating" method="post">
-								<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
-								<input type="hidden" id="oldRating" name="oldRating" value="{{scheda.rating}}"/>
-									<input type="radio" id="rating-1" name="rating" value="1" required {% if scheda.rating ==1 %}checked{% endif %}/>
-								<label for="rating-1">1</label>
-								<input type="radio" id="rating-2" name="rating" value="2" {% if scheda.rating ==2 %}checked{% endif %}/>
-								<label for="rating-2">2</label>
-								<input type="radio" id="rating-3" name="rating" value="3" {% if scheda.rating ==3 %}checked{% endif %} />
-								<label for="rating-3">3</label>
-								<input type="radio" id="rating-4" name="rating" value="4" {% if scheda.rating ==4 %}checked{% endif %}/>
-								<label for="rating-4">4</label>
-								<input type="radio" id="rating-5" name="rating" value="5" {% if scheda.rating ==5 %}checked{% endif %}/>
-								<label for="rating-5">5</label>
-								<button type="submit" class="btn btn-success">Valuta</button>
-							</form>
-						{% else %}
-							{% if scheda.rating is not none %}
-								{{scheda.rating}}/5
-							{% else %}
-								<em>Non valutato</em>
-							{% endif %}
-						{% endif %}
-
-						<!-- esercizi della scheda -->
-						<ul class="list-group list-group-flush">
-							{% for workout in allenamenti[scheda.id_scheda]%}
-								<li class="list-group-item">
-									<h5>Esercizio #{{loop.index}}</h5>
-									<p><strong>Titolo:</strong> {{workout.titolo}}</p>
-									<p><strong>Livello:</strong> {{workout.livello.capitalize()}} </p>
-									<!-- <strong>Descrizione:</strong>  -->
-									<p>{{workout.descrizione}}</p>
-								</li>
-							{% endfor %}
-						</ul>
-						{% if current_user.__class__.__name__ == "PersonalTrainer" %}
-
-							<a href="/modify_scheda/{{scheda.id_scheda}}" class="btn btn-success">Modifica</a>
-							<form action="/delete_scheda" method="post">
-								<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
-								<button type="submit" class="btn btn-danger">Elimina</button>
-							</form>
-						{% endif %}
+		<!-- Workout Plans Section -->
+    <section class="workout-plans-section py-5">
+			<div class="container">
+				<h2 class="text-center mb-4">Le Tue Schede di Allenamento</h2>
+				
+				{% for scheda in schede %}
+				<div class="row">
+					<div class="col-lg-6 col-md-8 mx-auto">
+						<div class="card mb-4">
+							<div class="card-body">
+								<h5 class="card-title text-center mb-3"><strong>{{scheda.titolo}}</strong></h5>
+								<!-- <p class="card-text"><strong>Creata da:</strong> Marco Verdi //DA VEDERE</p> -->
+								<p class="card-text"><strong>Obiettivo:</strong> {{scheda.obiettivo}}</p>
+								<ul class="list-group list-group-flush">
+									{% for workout in allenamenti[scheda.id_scheda]%}
+										<li class="list-group-item">
+											<!-- <h5>Esercizio #{{loop.index}}</h5> -->
+											 <h6 class="card-title">Esercizio #{{loop.index}}</h6>
+											<p class="card-text"><strong>Titolo:</strong> {{workout.titolo}}</p>
+											<p class="card-text"><strong>Livello:</strong> {{workout.livello.capitalize()}} </p>
+											<!-- <strong>Descrizione:</strong>  -->
+											<p class="card-text">{{workout.descrizione}}</p>
+										</li>
+									{% endfor %}
+								</ul>
+								{% if current_user.__class__.__name__ == "Client" %}
+									<form action="/update_rating" method="post">
+										<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
+										<input type="hidden" id="oldRating" name="oldRating" value="{{scheda.rating}}"/>
+											<input type="radio" id="rating-1" name="rating" value="1" required {% if scheda.rating ==1 %}checked{% endif %}/>
+										<label for="rating-1">1</label>
+										<input type="radio" id="rating-2" name="rating" value="2" {% if scheda.rating ==2 %}checked{% endif %}/>
+										<label for="rating-2">2</label>
+										<input type="radio" id="rating-3" name="rating" value="3" {% if scheda.rating ==3 %}checked{% endif %} />
+										<label for="rating-3">3</label>
+										<input type="radio" id="rating-4" name="rating" value="4" {% if scheda.rating ==4 %}checked{% endif %}/>
+										<label for="rating-4">4</label>
+										<input type="radio" id="rating-5" name="rating" value="5" {% if scheda.rating ==5 %}checked{% endif %}/>
+										<label for="rating-5">5</label>
+										<button type="submit" class="btn btn-success">Lascia un Voto</button>
+									</form>														
+								{% else %}
+									<p class="card-text d-inline mb-5"><strong>Valutazione:</strong> </p>
+									{% if scheda.rating is not none %}
+										{{scheda.rating}}/5
+									{% else %}
+										<em>Non valutato</em>
+									{% endif %}
+									<br>
+									<a href="/modify_scheda/{{scheda.id_scheda}}" class="btn btn-primary">Modifica</a>
+									<form action="/delete_scheda" method="post" class="d-inline">
+										<input type="hidden" id="id_scheda" name="id_scheda" value="{{scheda.id_scheda}}"/>
+										<button type="submit" class="btn btn-danger">Elimina</button>
+									</form>
+								{% endif %}
+							</div>
+						</div>
 					</div>
 				</div>
-			<!-- </div> -->
-		{% endfor %}
+				{% endfor %}
+			</div>
+		</section>
 	</ul>
-	
 {% endblock %}

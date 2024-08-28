@@ -9,9 +9,12 @@ body {
   padding: 60px 0;
 }
 
-.public-workouts-section {
+
+
+/* .public-workouts-section {
   background-color: #f8f9fa;
 }
+*/
 
 .card {
   transition: transform 0.3s;
@@ -23,10 +26,10 @@ body {
 
 footer {
   background-color: #f8f9fa;
-  /* position: fixed; fixed maybe
+  position: fixed; 
   left: 0;
   bottom: 0;
   right: 0;
   height: 60px;
-  line-height: 60px; */
+  line-height: 60px;
 }

@@ -4,9 +4,13 @@
 <!-- DA SISTEMARE GLI STILI E RENDERLI COMPATIBILIIII -->
 {% block style %}
   {% if not current_user.is_authenticated %}
-    {{url_for('static', filename='styles.css')}}
+    {{url_for('static', filename='style_homepage.css')}}
   {% else %}
-    {{url_for('static', filename='styles_personal.css')}}
+    {% if current_user.__class__.__name__ == "PersonalTrainer" %}
+      {{url_for('static', filename='styles_personal.css')}}
+    {% else %}
+      {{url_for('static', filename='style_client.css')}}
+    {% endif %}
   {% endif %}
 {% endblock %}
 
@@ -16,7 +20,7 @@
 <section class="hero-section text-center text-white d-flex align-items-center justify-content-center">
   <div class="container">
       <h1 class="display-4">Benvenuto in GetFit</h1>
-      <p class="lead">Crea, gestisci e monitora le tue sessioni di allenamento con i migliori personal trainer.</p>
+      <p class="lead"><span id="background-homepage">Crea, gestisci e monitora le tue sessioni di allenamento con i migliori personal trainer.</span></p>
       <a href="/signup" class="btn btn-primary btn-lg mt-4">Inizia Ora</a>
   </div>
 </section>
@@ -42,7 +46,7 @@
     <div class="col-lg-4 col-md-6 mb-4">
       <div class="feature-box p-4 border rounded">
         <i class="bi bi-bar-chart-line-fill display-4 text-primary"></i>
-        <h3 class="mt-3">Progresso</h3>
+        <h3 class="mt-3">Progressi</h3>
         <p>Monitora i tuoi miglioramenti con statistiche e feedback dettagliati.</p>
       </div>
     </div>
@@ -122,7 +126,7 @@
       <!-- Available Trainers Section -->
       <section class="trainers-section py-5">
         <div class="container">
-          <h2 class="text-center mb-4">Personal Trainer Disponibili</h2>
+          <h2 class="text-center text-white mb-4">Personal Trainer Disponibili</h2>
           <div class="row">
             {% for pt in pts %}
               <div class="col-lg-4 col-md-6 mb-4">

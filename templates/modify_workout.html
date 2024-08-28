@@ -1,36 +1,35 @@
 {% extends "base.html" %}
 {% block title %} Allenamenti {% endblock %}
 {% block content %}
-<a href="/">Torna indietro</a>
-	<div class="col-4 offset-md-4 bg-light p-4 border rounded">
-		<h4>Modifica allenamento</h4>
-		<form action="/modify_workout/{{allenamento.id_allenamento}}" method="POST">
-			<div class="mb-3">
-				<label for="titleInput" class="form-label">Titolo</label>
-				<input value="{{allenamento.titolo}}" type="text" class="form-control" name="titolo" id="titleInput" required>
-			</div>
-			<!-- <div class="mb-3">
-				<label for="descInput" class="form-label">Descrizione</label>
-				<input type="text" value="{{allenamento.descrizione}}" class="form-control" name="description" id="descInput" required>
-			</div> -->
-      <div class="mb-3">
-        <label for="FormControlTextarea" class="form-label">Descrizione</label>
-        <textarea name="description" class="form-control" id="FormControlTextarea" rows="3" required>{{allenamento.descrizione}}</textarea>
-      </div>
-			<div class="mb-3">
-				<label for="livello">Livello:</label>
-				<select class="form-select mt-2" aria-label="livello" id="livello" name="livello" required>
-					<option value="">Scegli il livello dell'allenamento</option>
-					<option value="facile" {% if allenamento.livello.lower() == "facile" %} selected {% endif %}>Facile</option>
-					<option value="medio" {% if allenamento.livello.lower() == "medio" %} selected {% endif %}>Medio</option>
-					<option value="difficile" {% if allenamento.livello.lower() == "difficile" %} selected {% endif %}>Difficile</option>
-				</select>
-			</div>
-			<div class="form-check form-switch mb-3">
-				<input class="form-check-input" type="checkbox" role="switch" id="flexSwitch" name="pubblico" value="pubblico" {% if allenamento.visibile == 1 %} checked {% endif %}>
-				<label class="form-check-label" for="flexSwitch">Pubblico</label>
-			</div> 
-			<button type="submit" class="btn btn-primary">Modifica</button>
-		</form>
-	</div>
+<div class="col-4 offset-md-4 bg-light p-4 border rounded mt-3 mb-3">
+	<h4>Modifica allenamento</h4>
+	<form action="/modify_workout/{{allenamento.id_allenamento}}" method="POST">
+		<div class="mb-3">
+			<label for="titleInput" class="form-label">Titolo</label>
+			<input value="{{allenamento.titolo}}" type="text" class="form-control" name="titolo" id="titleInput" required>
+		</div>
+		<!-- <div class="mb-3">
+			<label for="descInput" class="form-label">Descrizione</label>
+			<input type="text" value="{{allenamento.descrizione}}" class="form-control" name="description" id="descInput" required>
+		</div> -->
+		<div class="mb-3">
+			<label for="FormControlTextarea" class="form-label">Descrizione</label>
+			<textarea name="description" class="form-control" id="FormControlTextarea" rows="5" required>{{allenamento.descrizione}}</textarea>
+		</div>
+		<div class="mb-3">
+			<label for="livello">Livello:</label>
+			<select class="form-select mt-2" aria-label="livello" id="livello" name="livello" required>
+				<option value="">Scegli il livello dell'allenamento</option>
+				<option value="facile" {% if allenamento.livello.lower() == "facile" %} selected {% endif %}>Facile</option>
+				<option value="medio" {% if allenamento.livello.lower() == "medio" %} selected {% endif %}>Medio</option>
+				<option value="difficile" {% if allenamento.livello.lower() == "difficile" %} selected {% endif %}>Difficile</option>
+			</select>
+		</div>
+		<div class="form-check form-switch mb-3">
+			<input class="form-check-input" type="checkbox" role="switch" id="flexSwitch" name="pubblico" value="pubblico" {% if allenamento.visibile == 1 %} checked {% endif %}>
+			<label class="form-check-label" for="flexSwitch">Pubblico</label>
+		</div> 
+		<button type="submit" class="btn btn-primary">Modifica</button>
+	</form>
+</div>
 {% endblock %}
