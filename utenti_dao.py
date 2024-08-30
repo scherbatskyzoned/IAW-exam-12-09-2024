@@ -1,12 +1,10 @@
 import sqlite3
 
-
 def get_email(request):
 	try:
 		return request.cookies.get('remember_token').split('|')[0]
 	except Exception as e:
 		return None
-
 
 # Creates Personal Trainer
 #
@@ -17,13 +15,13 @@ def create_pt(user):
 	success = False
 
 	query1 = 'SELECT COUNT(*) FROM Clients WHERE email=?'
-	query2 = 'INSERT INTO PersonalTrainers(nome,cognome,email,password,rating,numOfRatings) VALUES (?,?,?,?,0.0,0)'
+	query2 = 'INSERT INTO PersonalTrainers(nome,cognome,genere,email,password,rating,numOfRatings) VALUES (?,?,?,?,?,0.0,0)'
 	try:
 		cursor.execute(query1, (user['email'],))
 		count = cursor.fetchone()[0]
 		# Check if email is already used in a client's account
 		if count == 0:
-			cursor.execute(query2, (user['name'], user['surname'], user['email'], user['password']))
+			cursor.execute(query2, (user['name'], user['surname'], user['genere'], user['email'], user['password']))
 			connection.commit()
 			success = True
 
@@ -44,13 +42,13 @@ def create_client(user):
 	success = False
 	
 	query1 = 'SELECT COUNT(*) FROM PersonalTrainers WHERE email=?'
-	query2 = 'INSERT INTO Clients(nome,cognome,email,password,pt_id) VALUES (?,?,?,?,NULL)'
+	query2 = 'INSERT INTO Clients(nome,cognome,genere,email,password,pt_id) VALUES (?,?,?,?,?,NULL)'
 	try:
 		cursor.execute(query1, (user['email'],))
 		count = cursor.fetchone()[0]
 		# Check if email is already used in a personal trainer's account
 		if count == 0:
-			cursor.execute(query2, (user['name'], user['surname'], user['email'],  user['password']))
+			cursor.execute(query2, (user['name'], user['surname'], user['genere'], user['email'],  user['password']))
 			connection.commit()
 			success = True
 	except Exception as e:
@@ -62,25 +60,29 @@ def create_client(user):
 	return success
 
 
-# Potrei fare una funzione unica cambiando semplicemente la query
-def get_full_name_client(id):
-	query = 'SELECT nome, cognome FROM Clients WHERE client_id=?'
+def get_client(client_id):
+	query = 'SELECT * FROM Clients WHERE client_id=?'
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 
-	cursor.execute(query,(id,))
-	full_name = cursor.fetchone()
-	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
+	cursor.execute(query,(client_id,))	
+	result = cursor.fetchone()
+	cursor.close()
+	connection.close()
+	return result
 
 
-def get_full_name_pt(id):
-	query = 'SELECT nome, cognome FROM PersonalTrainers WHERE pt_id=?'
+def get_full_name(id, type='client'):
+	query1 = 'SELECT nome, cognome FROM Clients WHERE client_id=?'
+	query2 = 'SELECT nome, cognome FROM PersonalTrainers WHERE pt_id=?'
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
-
-	cursor.execute(query,(id,))
+	if type == 'client':
+		cursor.execute(query1,(id,))
+	else:
+		cursor.execute(query2,(id,))
 	full_name = cursor.fetchone()
 	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
 
@@ -100,18 +102,19 @@ def get_personal_trainers():
 	return result
 
 
-def get_user_id_by_email(user_email):
+def get_user_id_by_email(user_email, type='client'):
 	query1 = 'SELECT pt_id FROM PersonalTrainers WHERE email = ?'
 	query2 = 'SELECT client_id FROM Clients WHERE email = ?'
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 
-	cursor.execute(query1,(user_email,))	
-	result = cursor.fetchone()
-	if result is None:
+	if type == 'pt':
+		cursor.execute(query1,(user_email,))	
+	else:
 		cursor.execute(query2, (user_email,))
-		result = cursor.fetchone()
+
+	result = cursor.fetchone()
 
 	cursor.close()
 	connection.close()

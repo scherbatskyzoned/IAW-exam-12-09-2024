@@ -1,42 +1,31 @@
-.hero-section {
-  /* background-color: #2F4F4F; */
-  background-color:#085c64;
-  color: white;
-  padding: 60px 0;
+.workouts-section {
+  margin-bottom: 50px;
 }
-
-#p-rating {
-  margin-top: 0.15rem;
-  margin-right: 0.3rem;
+.workout-card {
+  margin-bottom: 20px;
 }
-
-#no-rating {
-  margin-top:0.15rem;
-}
-
 .rating > .star-full {
   content: "★";
-  color: #e52;
+  color: gold;
   text-shadow: 0 0 1px #333;
-
 }
-
 .rating > .star-empty {
   content: "☆";
   color: #888;
   text-shadow: none;
 }
-
 .rating {
   unicode-bidi: bidi-override;
   direction: ltr;
   text-align: center;
 }
-
-
 .rating > span {
   display: inline-block;
   position: relative;
   width: .8em;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+}
+#p-rating {
+  margin-top: 1.1rem;
+  margin-right: .5rem;
 }

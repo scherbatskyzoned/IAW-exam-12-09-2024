@@ -3,12 +3,12 @@
 
 {% block style %}
   {% if not current_user.is_authenticated %}
-    {{url_for('static', filename='style_homepage.css')}}
+    {{url_for('static', filename='homepage_styles.css')}}
   {% else %}
     {% if current_user.__class__.__name__ == "PersonalTrainer" %}
-      {{url_for('static', filename='styles_personal.css')}}
+      {{url_for('static', filename='personal_styles.css')}}
     {% else %}
-      {{url_for('static', filename='style_client.css')}}
+      {{url_for('static', filename='client_styles.css')}}
     {% endif %}
   {% endif %}
 {% endblock %}
@@ -59,7 +59,7 @@
     <!-- Hero Section -->
     <section class="hero-section pt-5 pb-4 text-center text-white d-flex align-items-center justify-content-center">
       <div class="container">
-        <h1 class="display-4">Benvenuto, {{current_user.nome.capitalize()}}</h1>
+        <h1 class="display-4">Benvenut{% if current_user.genere == 'female' %}a{% elif current_user.genere == 'male' %}o{% else %}&#601;{% endif %}, {{current_user.nome.capitalize()}}</h1>
         <p class="lead">Gestisci i tuoi allenamenti e clienti con facilità.</p>
         <a href="/create_workout" class="btn btn-primary btn-lg mt-4">Crea un Nuovo Allenamento</a>
       </div>
@@ -70,19 +70,20 @@
       <div class="container">
         <h2 class="text-center mb-4">Allenamenti Pubblici</h2>
         <div class="row">
-        {% for allenamento in allenamenti %}
-          {% if allenamento.visibile != 0 %}
+        {% if not public_workouts %}
+          <p class="text-center">Nessun allenamento pubblico creato.</p>
+        {% endif %}
+        {% for allenamento in public_workouts %}
           <div class="col-lg-4 col-md-6 mb-4">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">{{allenamento.titolo}}</h5>
                 <p class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</p>
                 <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
-                <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
+                <p class="card-text"><small class="text-body-secondary">Creato il {{allenamento.data_creazione.split()[0]}} da {{creators[allenamento.id_allenamento]}}</small></p>
               </div>
             </div>
           </div>
-          {% endif %}
         {% endfor %}
         </div>
       </div>
@@ -93,6 +94,9 @@
       <div class="container">
         <h2 class="text-center mb-4">I Tuoi Clienti</h2>
         <div class="row">
+          {% if not clienti %}
+            <p class="text-center">Non hai ancora clienti.</p>
+          {% endif %}
           {% for cliente in clienti %}
           <div class="col-lg-4 col-md-6 mb-4">
             <div class="card">
@@ -115,7 +119,7 @@
   <!-- Hero Section -->
   <section class="hero-section pt-5 pb-4 text-center text-white d-flex align-items-center justify-content-center">
     <div class="container">
-        <h1 class="display-4">Benvenuto, {{current_user.nome.capitalize()}}</h1>
+        <h1 class="display-4">Benvenut{% if current_user.genere == 'female' %}a{% elif current_user.genere == 'male' %}o{% else %}&#601;{% endif %}, {{current_user.nome.capitalize()}}</h1>
         <p class="lead">Trova il tuo personal trainer e inizia il tuo percorso di allenamento.</p>
         {% if current_user.pt_id is not none %}
           <a href="/schede" class="btn btn-primary mt-3">Visualizza le Tue Schede</a>
@@ -161,6 +165,5 @@
       </section>
     {% endif %}
   {% endif %}
-  
 {% endif %}
 {% endblock %}

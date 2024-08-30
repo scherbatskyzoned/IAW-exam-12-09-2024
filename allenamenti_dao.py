@@ -28,7 +28,6 @@ def get_allenamenti():
 
 	cursor.execute(query)
 	result = cursor.fetchall()
-	print(result)
 
 	cursor.close()
 	connection.close()
@@ -75,6 +74,7 @@ def modifica_allenamento(workout):
 	connection.close()
 	return success
 
+
 def get_allenamenti_by_pt(pt_id):
 	query = 'SELECT * FROM Allenamenti WHERE pt_id=? ORDER BY data_creazione DESC'
 	connection = sqlite3.connect('db/personal.db')
@@ -84,7 +84,6 @@ def get_allenamenti_by_pt(pt_id):
 	cursor.execute(query, (pt_id,))
 
 	result = cursor.fetchall()
-	print(result)
 
 	cursor.close()
 	connection.close()

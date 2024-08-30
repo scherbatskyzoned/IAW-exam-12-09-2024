@@ -1,9 +1,8 @@
 .hero-section {
+  background-color: #085c64;
   color: white;
   padding: 60px 0;
-  background-color: #085c64;
 }
-
 .public-workouts-section {
   background-color: #f8f9fa;
 }

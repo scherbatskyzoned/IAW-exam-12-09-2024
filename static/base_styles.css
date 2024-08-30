@@ -3,21 +3,23 @@ html, body {
   height: 100%;
   margin: 0;
 }
-
+.hero-section {
+  background-color: #085c64;
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+}
 .wrapper {
   min-height: calc(100vh - 60px);
 }
-
 footer {
   background-color: #f8f9fa;
   height: 60px;
   line-height: 60px;
 }
-
 .card {
   transition: transform 0.3s;
 }
-
 .card:hover {
   transform: translateY(-5px);
 }

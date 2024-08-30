@@ -4,13 +4,9 @@
   background-position: center;
   height: 100vh;
 }
-
 #background-homepage {
   background-color:#085c64;  border-style: double;
   border-width: medium;
   padding:5px;
   line-height: 2;
 }
-
-
-

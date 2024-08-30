@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Profilo{% endblock %}
-{% block style %} {{url_for('static', filename='profile_style.css')}} {% endblock %}
+{% block style %} {{url_for('static', filename='profile_styles.css')}} {% endblock %}
 {% block content %}
 
   <!-- Profile Header -->
-  <section class="profile-header py-5">
+  <section class="hero-section py-5">
     <div class="container">
       <h1 class="mb-3">{{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}</h1>
       <div class="d-flex align-items-center justify-content-center">
@@ -26,7 +26,7 @@
   </section>
 
   <!-- Public Workouts -->
-  <section class="workouts-section">
+  <section class="workouts-section mt-3">
     <div class="container">
       <h2 class="mb-4">Allenamenti Pubblici</h2>
       <div class="row">

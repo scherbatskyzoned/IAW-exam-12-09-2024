@@ -7,13 +7,13 @@ def create_scheda(ids,pt_id,new_scheda):
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 	success = False
-
 	query = 'INSERT INTO Schede(client_id,pt_id,rating,titolo,obiettivo) VALUES (?,?,NULL,?,?)'
 	
 	try:
 		cursor.execute(query, (new_scheda["client_id"],pt_id,new_scheda["titolo"],new_scheda["obiettivo"]))
-		# commit solo se riesco a inserire allenamenti
-		connection.commit()
+		success = insert_allenamenti(cursor.lastrowid,ids,cursor,connection)
+		if success:
+			connection.commit()
 		success = True
 
 	except Exception as e:
@@ -22,29 +22,22 @@ def create_scheda(ids,pt_id,new_scheda):
 	
 	cursor.close()
 	connection.close()
-	success = insert_allenamenti(cursor.lastrowid,ids)
 	return success
 
-def insert_allenamenti(id_scheda,ids):
+def insert_allenamenti(id_scheda,ids,cursor,connection):
 	query = 'INSERT INTO CompostaDa(id_scheda,id_allenamento) VALUES (?,?)'
-	connection = sqlite3.connect('db/personal.db')
-	connection.row_factory = sqlite3.Row
-	cursor = connection.cursor()
 	success = False
 
 	try:
 		for id in ids:
 			cursor.execute(query, (id_scheda, id))
-		connection.commit()
 		success = True
-
 	except Exception as e:
 		print('Error', str(e))
 		connection.rollback()
-	cursor.close()
-	connection.close()
 	
 	return success
+
 
 def get_schede_by_client_id(client_id):
 	query = 'SELECT * FROM Schede WHERE client_id = ?'

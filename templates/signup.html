@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Registrati{% endblock %}
-{% block style %} {{url_for('static', filename='login_style.css')}} {% endblock %}
+{% block style %} {{url_for('static', filename='login_styles.css')}} {% endblock %}
 {% block content %} 
 	
 
@@ -14,6 +14,15 @@
 		<div class="mb-3">
 			<label for="surnameInput" class="form-label">Cognome</label>
 			<input type="text" class="form-control" name="surname" id="surnameInput" required>
+		</div>
+		<div class="mb-3">
+			<label for="genere">Genere</label>
+			<select class="form-select mt-2" aria-label="genere" id="genere" name="genere" required>
+				<option value="" selected>Scegli il tuo genere</option>
+				<option value="female">Donna</option>
+				<option value="male">Uomo</option>
+				<option value="other">Preferisco non dirlo</option>
+			</select>
 		</div>
 		<div class="mb-3">
 			<label for="emailInput" class="form-label">Email</label>
@@ -42,6 +51,4 @@
 		</div>
 	</form>
 </div>
-
-
 {% endblock %}

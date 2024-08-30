@@ -19,18 +19,28 @@ def index():
   allenamenti_db = allenamenti_dao.get_allenamenti()
   pts_db = utenti_dao.get_personal_trainers()
   clienti_db = []
-  pt_id = 0
+  id = 0
   numOfSchede = {}
+  public_workouts = []
+  creators = {}
 
   email = utenti_dao.get_email(request)
   if email is not None:
-    pt_id = utenti_dao.get_user_id_by_email(email)
-  if pt_id != 0:
-    clienti_db = utenti_dao.get_pt_clients(pt_id)
-    clienti_ids = [client['client_id'] for client in clienti_db]
-    for id in clienti_ids:
-      numOfSchede[id] = schede_dao.get_num_schede_by_client(id)[0]
-  return render_template('index.html', datetime=datetime, allenamenti=allenamenti_db, pts=pts_db, clienti=clienti_db, numOfSchede=numOfSchede) 
+    user, tipo = utenti_dao.get_user_by_email(email)
+    if tipo == 0: # it's a pt
+      id = user['pt_id']
+      for workout in allenamenti_db:
+        if workout['visibile']:
+          public_workouts.append(workout)
+          creators[workout['id_allenamento']] = utenti_dao.get_full_name(workout['pt_id'],'pt')
+      
+      clienti_db = utenti_dao.get_pt_clients(id)
+      clienti_ids = [client['client_id'] for client in clienti_db]
+      for id in clienti_ids:
+        numOfSchede[id] = schede_dao.get_num_schede_by_client(id)[0]
+      
+
+  return render_template('index.html', datetime=datetime, public_workouts=public_workouts, pts=pts_db, clienti=clienti_db, numOfSchede=numOfSchede,creators=creators) 
 
 # Pagina di presentazione del sito
 #  
@@ -45,13 +55,16 @@ def about():
 def signup():
   if request.method == 'POST':
     new_user = request.form.to_dict()
-    print("new user:",new_user)
-
+    print("new user", new_user)
     if new_user['name'] == '':
       app.logger.error('Il campo non può essere vuoto')
       return redirect(url_for('index'))
     
     if new_user['surname'] == '':
+      app.logger.error('Il campo non può essere vuoto')
+      return redirect(url_for('index'))
+
+    if new_user['genere'] == '':
       app.logger.error('Il campo non può essere vuoto')
       return redirect(url_for('index'))
 
@@ -75,11 +88,11 @@ def signup():
       success = utenti_dao.create_client(new_user)
 
     if success:
-      user_db, type = utenti_dao.get_user_by_email(new_user['email'])
-      if type == 0:
-        user = PersonalTrainer(nome=user_db['nome'], cognome=user_db['cognome'], pt_id=user_db['pt_id'], rating=user_db['rating'], numOfRatings=user_db['numOfRatings'], email=user_db['email'], password=user_db['password'])
+      user_db = utenti_dao.get_user_by_email(new_user['email'])[0]
+      if new_user['tipo'] == 'personal_trainer':
+        user = PersonalTrainer(nome=user_db['nome'], cognome=user_db['cognome'], genere=user_db['genere'], pt_id=user_db['pt_id'], rating=user_db['rating'], numOfRatings=user_db['numOfRatings'], email=user_db['email'], password=user_db['password'])
       else:
-        user = Client(nome=user_db['nome'], cognome=user_db['cognome'], client_id=user_db['client_id'], pt_id=user_db['pt_id'], email=user_db['email'], password=user_db['password'])
+        user = Client(nome=user_db['nome'], cognome=user_db['cognome'], genere=user_db['genere'], client_id=user_db['client_id'], pt_id=user_db['pt_id'], email=user_db['email'], password=user_db['password'])
       login_user(user, True)
       return redirect(url_for('index'))
 
@@ -94,7 +107,6 @@ def signup():
 def login():
   if request.method == 'POST':
     form_user = request.form.to_dict()
-    print("form",form_user)
     user_db, type = utenti_dao.get_user_by_email(form_user['email'])
     
     if not user_db or not check_password_hash(user_db['password'], form_user['password']):
@@ -102,9 +114,9 @@ def login():
       return redirect(url_for('login'))
     else:
       if type == 0:
-        new_user = PersonalTrainer(nome=user_db['nome'], cognome=user_db['cognome'], pt_id=user_db['pt_id'], rating=user_db['rating'], numOfRatings=user_db['numOfRatings'], email=user_db['email'], password=user_db['password'])
+        new_user = PersonalTrainer(nome=user_db['nome'], cognome=user_db['cognome'], genere=user_db['genere'], pt_id=user_db['pt_id'], rating=user_db['rating'], numOfRatings=user_db['numOfRatings'], email=user_db['email'], password=user_db['password'])
       else:
-        new_user = Client(nome=user_db['nome'], cognome=user_db['cognome'], client_id=user_db['client_id'], pt_id=user_db['pt_id'], email=user_db['email'], password=user_db['password'])
+        new_user = Client(nome=user_db['nome'], cognome=user_db['cognome'], genere=user_db['genere'], client_id=user_db['client_id'], pt_id=user_db['pt_id'], email=user_db['email'], password=user_db['password'])
       login_user(new_user, True)
 
       return redirect(url_for('index'))
@@ -114,12 +126,11 @@ def login():
 
 @login_manager.user_loader
 def load_user(user_email):
-  print("load user:", user_email)
   user_db, type = utenti_dao.get_user_by_email(user_email)
   if type == 0:
-    user = PersonalTrainer(nome=user_db['nome'], cognome=user_db['cognome'], pt_id=user_db['pt_id'], rating=user_db['rating'], numOfRatings=user_db['numOfRatings'], email=user_db['email'], password=user_db['password'])
+    user = PersonalTrainer(nome=user_db['nome'], cognome=user_db['cognome'], genere=user_db['genere'], pt_id=user_db['pt_id'], rating=user_db['rating'], numOfRatings=user_db['numOfRatings'], email=user_db['email'], password=user_db['password'])
   else:
-    user = Client(nome=user_db['nome'], cognome=user_db['cognome'], client_id=user_db['client_id'], pt_id=user_db['pt_id'], email=user_db['email'], password=user_db['password'])
+    user = Client(nome=user_db['nome'], cognome=user_db['cognome'], genere=user_db['genere'], client_id=user_db['client_id'], pt_id=user_db['pt_id'], email=user_db['email'], password=user_db['password'])
   return user
 
 
@@ -135,10 +146,9 @@ def logout():
 def create_workout():
   if request.method == 'POST':
     new_workout = request.form.to_dict()
-    print("workout:",new_workout)
     
     email = utenti_dao.get_email(request)
-    pt_id = utenti_dao.get_user_id_by_email(email)
+    pt_id = utenti_dao.get_user_id_by_email(email, 'pt')
 
     visibilita = new_workout.get("pubblico", "privato")
     if visibilita == "pubblico":
@@ -174,7 +184,7 @@ def create_workout():
 @app.route("/profile")
 def pt_profile():
   email = utenti_dao.get_email(request)
-  pt_id = utenti_dao.get_user_id_by_email(email)
+  pt_id = utenti_dao.get_user_id_by_email(email,'pt')
   public_workouts = []
   private_workouts = []
   allenamenti_pt_db = allenamenti_dao.get_allenamenti_by_pt(pt_id)
@@ -193,7 +203,15 @@ def pt_profile():
 def modify_workout(id_allenamento):
   if request.method == 'POST':
     workout = request.form.to_dict()
-    print("workout to modify:",workout)
+
+    pt_id_workout = allenamenti_dao.get_allenamento(id_allenamento)['pt_id']
+    email = utenti_dao.get_email(request)
+    pt_id = utenti_dao.get_user_id_by_email(email,'pt')
+
+    # Check that the pt is the creator of the workout
+    if (pt_id_workout != pt_id):
+      flash("Non hai i permessi per modificare l'allenamento.", "danger")
+      return redirect(url_for('pt_profile'))
 
     visibilita = workout.get("pubblico", "privato")
     if visibilita == "pubblico":
@@ -201,7 +219,6 @@ def modify_workout(id_allenamento):
     else:
       workout['visibile'] = 0
 
-    # print(form.get("pubblico", "privato"))
     if workout['titolo'] == '':
       app.logger.error('Il campo non può essere vuoto')
       return redirect(url_for('index'))
@@ -230,6 +247,15 @@ def modify_workout(id_allenamento):
 #
 @app.route("/delete_workout/<int:id_allenamento>", methods=['POST'])
 def delete_workout(id_allenamento):
+  pt_id_workout = allenamenti_dao.get_allenamento(id_allenamento)['pt_id']
+  email = utenti_dao.get_email(request)
+  pt_id = utenti_dao.get_user_id_by_email(email,'pt')
+
+  # Check that the pt is the creator of the workout
+  if (pt_id_workout != pt_id):
+    flash("Non hai i permessi per eliminare l'allenamento.", "danger")
+    return redirect(url_for('pt_profile'))
+  
   success = allenamenti_dao.delete_workout(id_allenamento)
   if not success:
     flash("Impossibile eliminare l'allenamento.", "danger")
@@ -240,9 +266,14 @@ def delete_workout(id_allenamento):
 @app.route("/assumi_pt/<int:pt_id>", methods=['POST'])
 def assumi_pt(pt_id):
   email = utenti_dao.get_email(request)
-  client_id = utenti_dao.get_user_id_by_email(email)
-  print("assumi_pt:", email, client_id, pt_id)
-  success = utenti_dao.set_pt_id(pt_id, client_id)
+  client_id = utenti_dao.get_user_id_by_email(email,'client')
+
+  # Check client has not already a personal trainer
+  pt_id_client = utenti_dao.get_user_by_email(email)[0]['pt_id']
+  if pt_id_client is None:
+    success = utenti_dao.set_pt_id(pt_id, client_id)
+  else:
+    success = False
   if not success:
     flash("Impossibile assumere il personal trainer.", "danger")
   return redirect(url_for("index"))
@@ -257,11 +288,11 @@ def schede():
   if type == 0: # A pt is logged
     client_id = request.args.get("client_id")
     # retrieve name of client 
-    name = utenti_dao.get_full_name_client(client_id)
+    name = utenti_dao.get_full_name(client_id, 'client')
   else: # A client is logged
     client_id = user['client_id']
     # retrieve name of pt
-    name = utenti_dao.get_full_name_pt(user['pt_id'])
+    name = utenti_dao.get_full_name(user['pt_id'],'pt')
   
   schede = schede_dao.get_schede_by_client_id(client_id)
 
@@ -287,9 +318,15 @@ def create_scheda():
   if request.method == 'POST':
     ids = request.form.getlist("ids")
     email = utenti_dao.get_email(request)
-    pt_id = utenti_dao.get_user_id_by_email(email)
+    pt_id = utenti_dao.get_user_id_by_email(email,'pt')
     client_id = request.form.get('client_id')
     new_scheda = request.form.to_dict()
+    pt_id_client = utenti_dao.get_client(client_id)['pt_id']
+
+    # Check that the pt is the one hired by the client
+    if (pt_id_client != pt_id):
+      flash("Non hai i permessi per creare la scheda.", "danger")
+      return redirect(url_for('index'))
     success = schede_dao.create_scheda(ids,pt_id,new_scheda)
     if success:
       return redirect(url_for("schede", client_id=client_id))
@@ -300,9 +337,8 @@ def create_scheda():
     allenamenti_db = allenamenti_dao.get_allenamenti()
     allenamenti = []
     email = utenti_dao.get_email(request)
-    pt_id = utenti_dao.get_user_id_by_email(email)
+    pt_id = utenti_dao.get_user_id_by_email(email,'pt')
     client_id = request.args.get("client_id")
-    print("create_scheda:",client_id)
 
     for allenamento in allenamenti_db:
       if allenamento['visibile'] == 1 or allenamento['pt_id'] == pt_id:
@@ -314,7 +350,6 @@ def create_scheda():
 @app.route("/update_rating", methods=['POST'])
 def update_rating():
   form_data = request.form.to_dict()
-  print("update_rating",form_data)
   email = utenti_dao.get_email(request)
   client = utenti_dao.get_user_by_email(email)[0]
   pt_id = client["pt_id"]
@@ -330,10 +365,9 @@ def update_rating():
   success = schede_dao.set_rating(form_data['id_scheda'], form_data['rating'])
 
   if form_data['oldRating'] == 'None':
-    print("votoNuovo: si")
     utenti_dao.update_pt_rating(pt_id, form_data['rating'], votoNuovo=True)
+  # Voto modificato
   else:
-    print("votoNuovo: no")
     utenti_dao.update_pt_rating(pt_id, form_data['rating'], votoNuovo=False, oldRating=form_data['oldRating'])
   
   if success:
@@ -351,6 +385,16 @@ def delete_scheda():
     return redirect(url_for('index'))
   
   client_id = schede_dao.get_client_id_by_id_scheda(id_scheda)
+
+  pt_id_scheda = schede_dao.get_scheda_by_id(id_scheda)['pt_id']
+  email = utenti_dao.get_email(request)
+  pt_id = utenti_dao.get_user_id_by_email(email,'pt')
+
+  # Check that the pt is the creator of the workout plan
+  if (pt_id_scheda != pt_id):
+    flash("Non hai i permessi per eliminare la scheda.", "danger")
+    return redirect(url_for('index'))
+
   success = schede_dao.delete_scheda(id_scheda)
   if not success:
     flash("Impossibile eliminare la scheda.", "danger")
@@ -363,7 +407,15 @@ def modify_scheda(id_scheda):
   if request.method == 'POST':
     client_id = schede_dao.get_client_id_by_id_scheda(id_scheda)
     scheda = request.form.to_dict()
-    print(scheda)
+
+    pt_id_scheda = schede_dao.get_scheda_by_id(id_scheda)['pt_id']
+    email = utenti_dao.get_email(request)
+    pt_id = utenti_dao.get_user_id_by_email(email,'pt')
+
+    # Check that the pt is the creator of the workout plan
+    if (pt_id_scheda != pt_id):
+      flash("Non hai i permessi per modificare la scheda.", "danger")
+      return redirect(url_for('index'))
   
     if scheda['titolo'] == '':
         app.logger.error('Il campo non può essere vuoto')
@@ -376,8 +428,6 @@ def modify_scheda(id_scheda):
     scheda['id_scheda'] = id_scheda
     ids = request.form.getlist("ids")
 
-    print("modify scheda:", ids)
-
     success = schede_dao.update_scheda(scheda, ids)
 
     if success:
@@ -387,7 +437,7 @@ def modify_scheda(id_scheda):
   
   else:
     email = utenti_dao.get_email(request)
-    pt_id = utenti_dao.get_user_id_by_email(email)
+    pt_id = utenti_dao.get_user_id_by_email(email,'pt')
 
     scheda = schede_dao.get_scheda_by_id(id_scheda)
     allenamenti_ids = schede_dao.get_allenamenti_ids_by_id_scheda(id_scheda)
@@ -399,6 +449,4 @@ def modify_scheda(id_scheda):
     for allenamento in allenamenti_db:
       if allenamento['visibile'] == 1 or allenamento['pt_id'] == pt_id:
         allenamenti.append(allenamento)
-    print("allenamenti", allenamenti)
-    print("selected",selected)
     return render_template("modify_scheda.html", scheda=scheda,allenamenti=allenamenti,selected=selected)
