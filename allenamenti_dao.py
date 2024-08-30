@@ -27,7 +27,6 @@ def get_allenamenti():
 	cursor = connection.cursor()
 
 	cursor.execute(query)
-
 	result = cursor.fetchall()
 	print(result)
 

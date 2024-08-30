@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user
-from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-import requests
 
 import utenti_dao, allenamenti_dao, schede_dao
 from models import PersonalTrainer, Client
@@ -33,6 +31,13 @@ def index():
     for id in clienti_ids:
       numOfSchede[id] = schede_dao.get_num_schede_by_client(id)[0]
   return render_template('index.html', datetime=datetime, allenamenti=allenamenti_db, pts=pts_db, clienti=clienti_db, numOfSchede=numOfSchede) 
+
+# Pagina di presentazione del sito
+#  
+@app.route('/about')
+def about():
+  return render_template('about.html')
+
 
 # Pagina di Registrazione
 #
@@ -170,9 +175,16 @@ def create_workout():
 def pt_profile():
   email = utenti_dao.get_email(request)
   pt_id = utenti_dao.get_user_id_by_email(email)
+  public_workouts = []
+  private_workouts = []
   allenamenti_pt_db = allenamenti_dao.get_allenamenti_by_pt(pt_id)
+  for workout in allenamenti_pt_db:
+    if workout['visibile'] == 0:
+      private_workouts.append(workout)
+    else:
+      public_workouts.append(workout)
 
-  return render_template('profile.html',allenamenti=allenamenti_pt_db)
+  return render_template('profile.html', public_workouts=public_workouts, private_workouts=private_workouts)
 
 
 # Pagina di Modifica di un Allenamento
@@ -276,10 +288,11 @@ def create_scheda():
     ids = request.form.getlist("ids")
     email = utenti_dao.get_email(request)
     pt_id = utenti_dao.get_user_id_by_email(email)
+    client_id = request.form.get('client_id')
     new_scheda = request.form.to_dict()
     success = schede_dao.create_scheda(ids,pt_id,new_scheda)
     if success:
-      return redirect(url_for("index"))
+      return redirect(url_for("schede", client_id=client_id))
     flash("Impossibile creare la scheda.", "danger")
     return redirect(url_for("create_scheda"))
 

@@ -4,3 +4,39 @@
   color: white;
   padding: 60px 0;
 }
+
+#p-rating {
+  margin-top: 0.15rem;
+  margin-right: 0.3rem;
+}
+
+#no-rating {
+  margin-top:0.15rem;
+}
+
+.rating > .star-full {
+  content: "★";
+  color: #e52;
+  text-shadow: 0 0 1px #333;
+
+}
+
+.rating > .star-empty {
+  content: "☆";
+  color: #888;
+  text-shadow: none;
+}
+
+.rating {
+  unicode-bidi: bidi-override;
+  direction: ltr;
+  text-align: center;
+}
+
+
+.rating > span {
+  display: inline-block;
+  position: relative;
+  width: .8em;
+  font-size: 1.3rem;
+}

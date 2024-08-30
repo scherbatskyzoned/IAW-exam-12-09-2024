@@ -1,32 +1,11 @@
 import sqlite3
 
+
 def get_email(request):
 	try:
 		return request.cookies.get('remember_token').split('|')[0]
 	except Exception as e:
 		return None
-
-
-def get_full_name_client(id):
-	query = 'SELECT nome, cognome FROM Clients WHERE client_id=?'
-	connection = sqlite3.connect('db/personal.db')
-	connection.row_factory = sqlite3.Row
-	cursor = connection.cursor()
-
-	cursor.execute(query,(id,))
-	full_name = cursor.fetchone()
-	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
-
-
-def get_full_name_pt(id):
-	query = 'SELECT nome, cognome FROM PersonalTrainers WHERE pt_id=?'
-	connection = sqlite3.connect('db/personal.db')
-	connection.row_factory = sqlite3.Row
-	cursor = connection.cursor()
-
-	cursor.execute(query,(id,))
-	full_name = cursor.fetchone()
-	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
 
 
 # Creates Personal Trainer
@@ -83,6 +62,29 @@ def create_client(user):
 	return success
 
 
+# Potrei fare una funzione unica cambiando semplicemente la query
+def get_full_name_client(id):
+	query = 'SELECT nome, cognome FROM Clients WHERE client_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+
+	cursor.execute(query,(id,))
+	full_name = cursor.fetchone()
+	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
+
+
+def get_full_name_pt(id):
+	query = 'SELECT nome, cognome FROM PersonalTrainers WHERE pt_id=?'
+	connection = sqlite3.connect('db/personal.db')
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+
+	cursor.execute(query,(id,))
+	full_name = cursor.fetchone()
+	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
+
+
 def get_personal_trainers():
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
@@ -113,8 +115,6 @@ def get_user_id_by_email(user_email):
 
 	cursor.close()
 	connection.close()
-
-	# print("qwjilqwelel",result[0])
 	return result[0]
 
 
@@ -141,12 +141,10 @@ def get_user_by_email(user_email):
 
 	cursor.execute(query1,(user_email,))
 	user = cursor.fetchone()
-	print("query 1:",user)
 
 	if user is None:
 		cursor.execute(query2, (user_email,)) # Clients
 		user = cursor.fetchone()
-		print("query 2:", user)
 		type = 1
 	
 	cursor.close()
@@ -183,7 +181,6 @@ def update_pt_rating(pt_id, rating, votoNuovo, oldRating=0.0):
 	result = cursor.fetchone()
 	cursor.close()
 	connection.close()
-	print("update pt rating:",result)
 
 	old_media_rating=result['rating']
 	num=result['numOfRatings']
@@ -194,7 +191,6 @@ def update_pt_rating(pt_id, rating, votoNuovo, oldRating=0.0):
 		new_rating=tmp+float(rating)
 	else:
 		new_rating=tmp+float(rating)-float(oldRating)
-		print(f'new_rating = {tmp} - {oldRating} + {float(rating)}')
 	
 	new_rating=new_rating/num
 	query='UPDATE PersonalTrainers SET rating=?, numOfRatings=? WHERE pt_id=?'

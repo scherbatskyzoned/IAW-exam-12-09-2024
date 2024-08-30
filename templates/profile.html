@@ -2,11 +2,9 @@
 {% block title %}Profilo{% endblock %}
 {% block style %} {{url_for('static', filename='profile_style.css')}} {% endblock %}
 {% block content %}
-	<!-- <h1>Ciao {{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}!</h1>
-  <h2>La tua valutazione: {% if current_user.rating == 0.0 %} <em>Nessuna valutazione</em> {% else %} {{'%.1f'%(current_user.rating)}}/5.0 {% endif %}</h2> -->
-  
+
   <!-- Profile Header -->
-  <section class="profile-header pt-5">
+  <section class="profile-header py-5">
     <div class="container">
       <h1 class="mb-3">{{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}</h1>
       <div class="d-flex align-items-center justify-content-center">
@@ -19,22 +17,11 @@
             <span class="{% if current_user.rating > 3.5 %}star-full{% else %}star-empty{% endif %}">{% if current_user.rating > 3.5 %}★{% else %}☆{% endif %}</span>
             <span class="{% if current_user.rating > 4.5 %}star-full{% else %}star-empty{% endif %}">{% if current_user.rating > 4.5 %}★{% else %}☆{% endif %}</span>
           </div>
+          <span class="ms-2">({{'%.1f'%(current_user.rating)}} su 5)</span>
         {% else %}
           <em>Non valutato</em>
         {% endif %}
       </div>
-
-<!--  -->
-      <!-- <div class="rating-stars mb-3">
-        Visualizzazione del rating complessivo
-        <i class="{% if current_user.rating >= 0.5 %} fas {% else %} far {% endif %} fa-star"></i>
-        <i class="{% if current_user.rating >= 1.5 %} fas {% else %} far {% endif %} fa-star"></i>
-        <i class="{% if current_user.rating >= 2.5 %} fas {% else %} far {% endif %} fa-star"></i>
-        <i class="{% if current_user.rating >= 3.5 %} fas {% else %} far {% endif %} fa-star"></i>
-        fa-star-half-alt
-        <i class="{% if current_user.rating >= 4.5 %} fas {% else %} far {% endif %} fa-star"></i>
-        <span class="ms-2">({{'%.1f'%(current_user.rating)}} su 5)</span>
-      </div> -->
     </div>
   </section>
 
@@ -43,23 +30,24 @@
     <div class="container">
       <h2 class="mb-4">Allenamenti Pubblici</h2>
       <div class="row">
-        {% for allenamento in allenamenti %}
-          {% if allenamento.visibile != 0 %}
-            <div class="col-lg-4 col-md-6 workout-card">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">{{ allenamento.titolo }}</h5>
-                  <p class="card-subtitle text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</p>
-                  <p class="card-text">{{allenamento.descrizione}}</p>
-                  <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
-                  <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
-                    <button type="submit" class="btn btn-danger">Elimina</button> 
-                  </form>
-                  <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
-                </div>
+        {% if not public_workouts %}
+        <p>Nessun allenamento pubblico creato.</p>
+        {% endif %}
+        {% for allenamento in public_workouts %}
+          <div class="col-lg-4 col-md-6 workout-card">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ allenamento.titolo }}</h5>
+                <p class="card-subtitle text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</p>
+                <p class="card-text">{{allenamento.descrizione}}</p>
+                <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
+                <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
+                  <button type="submit" class="btn btn-danger">Elimina</button> 
+                </form>
+                <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
               </div>
             </div>
-          {% endif %}
+          </div>
         {% endfor %}
       </div>
     </div>
@@ -70,23 +58,24 @@
     <div class="container">
       <h2 class="mb-4">Allenamenti Privati</h2>
       <div class="row">
-        {% for allenamento in allenamenti %}
-          {% if allenamento.visibile == 0 %}
-            <div class="col-lg-4 col-md-6 workout-card">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">{{ allenamento.titolo }}</h5>
-                  <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
-                  <p class="card-text">{{allenamento.descrizione}}</p>
-                  <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
-                  <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
-                    <button type="submit" class="btn btn-danger">Elimina</button> 
-                  </form>
-                  <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
-                </div>
+        {% if not private_workouts %}
+        <p>Nessun allenamento privato creato.</p>
+        {% endif %}
+        {% for allenamento in private_workouts %}
+          <div class="col-lg-4 col-md-6 workout-card">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ allenamento.titolo }}</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
+                <p class="card-text">{{allenamento.descrizione}}</p>
+                <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
+                <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
+                  <button type="submit" class="btn btn-danger">Elimina</button> 
+                </form>
+                <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
               </div>
             </div>
-          {% endif %}
+          </div>
         {% endfor %}
       </div>
     </div>

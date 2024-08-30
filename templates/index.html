@@ -134,8 +134,22 @@
                 <div class="card">
                   <div class="card-body">
                     <h5 class="card-title">{{pt.nome.capitalize()}} {{pt.cognome.capitalize()}}</h5>
-                    <p class="card-text">Valutazione: {% if pt.rating == 0.0 %} <em>Nessuna valutazione</em>{% else %} {{'%.1f'%(pt.rating)}}{% endif %}</p>
-                    <form action="/assumi_pt/{{pt.pt_id}}" method="post">
+                    <div class="d-flex align-items-start">
+                      <p id="p-rating">Valutazione: </p>
+                        {% if pt.rating == 0.0 %} 
+                          <span class="ms-1" id="no-rating"><em>Nessuna valutazione</em></span>
+                        {% else %} 
+                          <div class="rating">
+                            <span class="{% if pt.rating > 0.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 0.5 %}★{% else %}☆{% endif %}</span>
+                            <span class="{% if pt.rating > 1.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 1.5 %}★{% else %}☆{% endif %}</span>
+                            <span class="{% if pt.rating > 2.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 2.5 %}★{% else %}☆{% endif %}</span>
+                            <span class="{% if pt.rating > 3.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 3.5 %}★{% else %}☆{% endif %}</span>
+                            <span class="{% if pt.rating > 4.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 4.5 %}★{% else %}☆{% endif %}</span>
+                          </div>
+                          <span class="ms-2 mt-1">({{'%.1f'%(pt.rating)}} su 5)</span>
+                        {% endif %}
+                    </div>
+                    <form class="mt-3" action="/assumi_pt/{{pt.pt_id}}" method="post">
                       <button type="submit" class="btn btn-primary">Assumi</button>
                     </form>
                   </div>

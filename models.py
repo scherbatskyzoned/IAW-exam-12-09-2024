@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 
-class User(UserMixin): # use uuid6 for id
+class User(UserMixin):
 	def __init__(self, nome, cognome, email, password):
 		self.nome = nome
 		self.cognome = cognome
@@ -27,4 +27,3 @@ class Client(User):
 		# inizializzazione
 		self.pt_id = pt_id
 		self.client_id = client_id
-

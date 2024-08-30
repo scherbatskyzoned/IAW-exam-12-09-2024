@@ -1,5 +1,6 @@
-import sqlite3
 # Utilities to work on tables CompostaDa AND Schede
+#
+import sqlite3
 
 def create_scheda(ids,pt_id,new_scheda):
 	connection = sqlite3.connect('db/personal.db')
@@ -11,8 +12,8 @@ def create_scheda(ids,pt_id,new_scheda):
 	
 	try:
 		cursor.execute(query, (new_scheda["client_id"],pt_id,new_scheda["titolo"],new_scheda["obiettivo"]))
+		# commit solo se riesco a inserire allenamenti
 		connection.commit()
-		# print("lastrowid",cursor.lastrowid)
 		success = True
 
 	except Exception as e:
@@ -21,7 +22,6 @@ def create_scheda(ids,pt_id,new_scheda):
 	
 	cursor.close()
 	connection.close()
-	# sistema posizione 
 	success = insert_allenamenti(cursor.lastrowid,ids)
 	return success
 
@@ -36,7 +36,6 @@ def insert_allenamenti(id_scheda,ids):
 		for id in ids:
 			cursor.execute(query, (id_scheda, id))
 		connection.commit()
-		# print("lastrowid",cursor.lastrowid)
 		success = True
 
 	except Exception as e:
@@ -54,10 +53,7 @@ def get_schede_by_client_id(client_id):
 	cursor = connection.cursor()
 
 	cursor.execute(query,(client_id,))
-
 	result = cursor.fetchall()
-	# print(result)
-
 	cursor.close()
 	connection.close()
 
@@ -88,13 +84,12 @@ def get_allenamenti_ids_by_id_scheda(id_scheda):
 	cursor = connection.cursor()
 
 	cursor.execute(query,(id_scheda,))
-
-	workout_ids_montassar = cursor.fetchall()
+	workout_ids = cursor.fetchall()
 
 	cursor.close()
 	connection.close()
 
-	return workout_ids_montassar
+	return workout_ids
 
 
 def delete_scheda(id_scheda):
@@ -163,7 +158,6 @@ def update_scheda(scheda, ids):
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 	success = False
-	# Rating to NULL or not??
 	query = 'UPDATE Schede SET titolo=?, obiettivo=? WHERE id_scheda=?'
 	query2 = 'DELETE FROM CompostaDa WHERE id_scheda=?'
 	
@@ -172,12 +166,10 @@ def update_scheda(scheda, ids):
 		cursor.execute(query2, (scheda['id_scheda'],))
 		connection.commit()
 		success = True
-		# print("SUCCESS")
 
 	except Exception as e:
 		print('Error', str(e))
 		connection.rollback()
-		# print("FAILURE")
 
 	cursor.close()
 	connection.close()

@@ -6,7 +6,7 @@
 
 <div class="login-container mt-3 mb-3">
 	<h2>Crea Nuovo Account</h2>
-	<form  action="/signup" method="POST">
+	<form  action="/signup" method="POST" onsubmit="checkPassword(event)">
 		<div class="mb-3">
 			<label for="nameInput" class="form-label">Nome</label>
 			<input type="text" class="form-control" name="name" id="nameInput" required>
@@ -20,7 +20,7 @@
 			<input type="email" class="form-control" name="email" id="emailInput" required>
 		</div>
 		<div class="mb-3">
-			<label for="tipo">Tipo di account:</label>
+			<label for="tipo">Tipo di account</label>
 			<select class="form-select mt-2" aria-label="tipo" id="tipo" name="tipo" required>
 				<option value="" selected>Scegli il tipo di account</option>
 				<option value="personal_trainer">Personal Trainer</option>
@@ -30,7 +30,11 @@
 		<div class="mb-3">
 			<label for="passwordInput" class="form-label">Password</label>
 			<input type="password" class="form-control" name="password" id="passwordInput" required>
-			<div id="passwordHelp" class="form-text">Non condivideremo la tua password con nessuno.</div>
+		</div>
+		<div class="mb-3">
+			<label for="passwordCheckInput" class="form-label">Conferma Password</label>
+			<input type="password" class="form-control" id="passwordCheckInput" required>
+			<p id="error-message" class="form-text"></p>
 		</div>
 		<button type="submit" class="btn btn-primary">Registrati</button>
 		<div class="form-text">
@@ -38,4 +42,6 @@
 		</div>
 	</form>
 </div>
+
+
 {% endblock %}

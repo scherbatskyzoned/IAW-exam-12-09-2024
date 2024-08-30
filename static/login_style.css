@@ -1,11 +1,3 @@
-/* body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content:space-between;
-  height: 100vh;
-  background-color: #f8f9fa;
-} */
 .login-container {
   margin: 0 auto;
   max-width: 500px;

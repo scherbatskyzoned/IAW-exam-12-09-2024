@@ -1,6 +1,8 @@
 .profile-header {
   text-align: center;
+  color: white;
   margin-bottom: 50px;
+  background-color:#085c64;
 }
 
 .workouts-section {
@@ -12,7 +14,8 @@
 
 .rating > .star-full {
   content: "★";
-  color: #e52;
+  /* color: #e52; */
+  color: gold;
   text-shadow: 0 0 1px #333;
 
 }
