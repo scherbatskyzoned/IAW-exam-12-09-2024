@@ -81,6 +81,7 @@ def signup():
     
     new_user['password'] = generate_password_hash(new_user['password'])
 
+    success = False
     if new_user['tipo'] == 'personal_trainer':
       success = utenti_dao.create_pt(new_user)
     elif new_user['tipo'] == 'client':
@@ -321,16 +322,18 @@ def create_scheda():
     client_id = request.form.get('client_id')
     new_scheda = request.form.to_dict()
     pt_id_client = utenti_dao.get_client(client_id)['pt_id']
+    success = False
 
     # Check that the pt is the one hired by the client
     if (pt_id_client != pt_id):
       flash("Non hai i permessi per creare la scheda.", "danger")
       return redirect(url_for('index'))
-    success = schede_dao.create_scheda(ids,pt_id,new_scheda)
+    if ids:
+      success = schede_dao.create_scheda(ids,pt_id,new_scheda)
     if success:
       return redirect(url_for("schede", client_id=client_id))
     flash("Impossibile creare la scheda.", "danger")
-    return redirect(url_for("create_scheda"))
+    return redirect(url_for("create_scheda",client_id=client_id))
 
   else:
     allenamenti_db = allenamenti_dao.get_allenamenti()
