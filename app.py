@@ -55,7 +55,6 @@ def about():
 def signup():
   if request.method == 'POST':
     new_user = request.form.to_dict()
-    print("new user", new_user)
     if new_user['name'] == '':
       app.logger.error('Il campo non può essere vuoto')
       return redirect(url_for('index'))
