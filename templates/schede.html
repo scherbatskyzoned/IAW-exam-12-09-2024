@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Schede{% endblock %}
-{% block style %} {{url_for('static', filename='schede_styles.css')}} {% endblock %}
+{% block style %} {{url_for('static', filename='css/schede_styles.css')}} {% endblock %}
 {% block content %}
 	{% if current_user.__class__.__name__ == "PersonalTrainer" %}
 		<section class="hero-section">

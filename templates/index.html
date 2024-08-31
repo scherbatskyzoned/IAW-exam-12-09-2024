@@ -3,12 +3,12 @@
 
 {% block style %}
   {% if not current_user.is_authenticated %}
-    {{url_for('static', filename='homepage_styles.css')}}
+    {{url_for('static', filename='css/homepage_styles.css')}}
   {% else %}
     {% if current_user.__class__.__name__ == "PersonalTrainer" %}
-      {{url_for('static', filename='personal_styles.css')}}
+      {{url_for('static', filename='css/personal_styles.css')}}
     {% else %}
-      {{url_for('static', filename='client_styles.css')}}
+      {{url_for('static', filename='css/client_styles.css')}}
     {% endif %}
   {% endif %}
 {% endblock %}
