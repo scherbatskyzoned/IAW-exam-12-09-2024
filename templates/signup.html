@@ -9,11 +9,11 @@
 	<form  action="/signup" method="POST" onsubmit="checkPassword(event)">
 		<div class="mb-3">
 			<label for="nameInput" class="form-label">Nome</label>
-			<input type="text" class="form-control" name="name" id="nameInput" required>
+			<input type="text" class="form-control" name="name" id="nameInput" required autocomplete="off">
 		</div>
 		<div class="mb-3">
 			<label for="surnameInput" class="form-label">Cognome</label>
-			<input type="text" class="form-control" name="surname" id="surnameInput" required>
+			<input type="text" class="form-control" name="surname" id="surnameInput" required autocomplete="off">
 		</div>
 		<div class="mb-3">
 			<label for="genere">Genere</label>
@@ -26,7 +26,7 @@
 		</div>
 		<div class="mb-3">
 			<label for="emailInput" class="form-label">Email</label>
-			<input type="email" class="form-control" name="email" id="emailInput" required>
+			<input type="email" class="form-control" name="email" id="emailInput" required autocomplete="off">
 		</div>
 		<div class="mb-3">
 			<label for="tipo">Tipo di account</label>
@@ -38,11 +38,11 @@
 		</div>
 		<div class="mb-3">
 			<label for="passwordInput" class="form-label">Password</label>
-			<input type="password" class="form-control" name="password" id="passwordInput" required>
+			<input type="password" class="form-control" name="password" id="passwordInput" required autocomplete="off">
 		</div>
 		<div class="mb-3">
 			<label for="passwordCheckInput" class="form-label">Conferma Password</label>
-			<input type="password" class="form-control" id="passwordCheckInput" required>
+			<input type="password" class="form-control" id="passwordCheckInput" required autocomplete="off">
 			<p id="error-message" class="form-text"></p>
 		</div>
 		<button type="submit" class="btn btn-primary">Registrati</button>
