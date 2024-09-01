@@ -70,7 +70,10 @@
         {% if messages %}
           {% for category, message in messages %}
           <div class="alert alert-{{category}} alert-dismissible fade show mt-3 mx-3" role="alert">
-              {{ message }}
+            {% if category == "danger" %}
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            {% endif %}
+            {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
           {% endfor %}

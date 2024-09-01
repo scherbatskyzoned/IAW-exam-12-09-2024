@@ -29,3 +29,12 @@
   color: #007bff;
   text-decoration: none;
 }
+
+#exclamation {
+  color:#b3261e;
+  display: none;
+}
+
+#error-message {
+  color: #b3261e;
+}
