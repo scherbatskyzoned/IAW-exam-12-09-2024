@@ -71,6 +71,8 @@
           <div class="alert alert-{{category}} alert-dismissible fade show mt-3 mx-3" role="alert">
             {% if category == "danger" %}
             <i class="fa-solid fa-triangle-exclamation"></i>
+            {% elif category == "success" %}
+            <i class="fa-solid fa-circle-check"></i>
             {% endif %}
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -86,7 +88,7 @@
     <div class="push"></div> 
     
     <!-- Footer -->
-    <footer class="bg-light">
+    <footer>
       <div class="container text-center">
         <p class="mb-0">&copy; 2024 Beatrice Castorina</p>
       </div>

@@ -157,7 +157,10 @@ def update_scheda(scheda, ids):
 	try:
 		cursor.execute(query, (scheda['titolo'], scheda['obiettivo'], scheda['id_scheda']))
 		cursor.execute(query2, (scheda['id_scheda'],))
-		connection.commit()
+		
+		success = insert_allenamenti(scheda['id_scheda'],ids,cursor,connection)
+		if success:
+			connection.commit()
 		success = True
 
 	except Exception as e:
@@ -166,9 +169,6 @@ def update_scheda(scheda, ids):
 
 	cursor.close()
 	connection.close()
-
-	success = insert_allenamenti(scheda['id_scheda'],ids)
-
 	return success
 
 def get_num_schede_by_client(client_id):
