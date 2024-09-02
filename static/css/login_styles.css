@@ -33,8 +33,19 @@
 #exclamation {
   color:#b3261e;
   display: none;
+  margin-top: .7rem;
 }
 
 #error-message {
   color: #b3261e;
+}
+
+.field-icon {
+  float: right;
+  margin-left: -25px;
+  margin-top: -25px;
+  padding-right: 1rem;
+  position: relative;
+  z-index: 2;
+  color: rgba(33, 37, 41, 0.80);
 }

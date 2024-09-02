@@ -16,11 +16,10 @@
     <label class="form-label">Seleziona allenamenti</label>
     {% for allenamento in allenamenti %}
       <div class="form-check">
-        <!-- if esercizio in Scheda check the checkbox -->
+        <!-- if esercizio in scheda check the checkbox -->
         <input class="form-check-input" type="checkbox" name="ids" value="{{allenamento.id_allenamento}}" id="flexCheck{{loop.index}}" {% if allenamento in selected %} checked {% endif %}>
         <label class="form-check-label" for="flexCheck{{loop.index}}">
           {{allenamento.titolo}}
-          <!-- clicca per popup con info quali livello e descrizione -->
         </label>
       </div>
     {% endfor %}

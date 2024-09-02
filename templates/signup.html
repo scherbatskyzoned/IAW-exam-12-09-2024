@@ -2,7 +2,6 @@
 {% block title %}Registrati{% endblock %}
 {% block style %} {{url_for('static', filename='css/login_styles.css')}} {% endblock %}
 {% block content %} 
-	
 
 <div class="login-container mt-3 mb-3">
 	<h2>Crea Nuovo Account</h2>
@@ -38,14 +37,20 @@
 		</div>
 		<div class="mb-3">
 			<label for="passwordInput" class="form-label">Password</label>
-			<input type="password" class="form-control" name="password" id="passwordInput" required autocomplete="off">
+			<input type="password" class="form-control password-input" name="password" id="passwordInput" required autocomplete="off">
+			<span class="toggle-password">
+				<i class="fa-solid fa-eye field-icon" id="togglePassword"></i>
+			</span>		
 		</div>
 		<div class="mb-3">
 			<label for="passwordCheckInput" class="form-label">Conferma Password</label>
-			<input type="password" class="form-control" id="passwordCheckInput" required autocomplete="off">
-			<div class="mt-1">
+			<input type="password" class="form-control password-input" id="passwordCheckInput" required autocomplete="off">
+			<span class="toggle-password">
+				<i class="fa-solid fa-eye field-icon"></i>
+			</span>	
+			<div class="d-flex flex-row mt-1">
 				<i class="fa-solid fa-circle-exclamation ms-1" id="exclamation"></i>
-				<p id="error-message" class="form-text d-inline"></p>
+				<p id="error-message" class="form-text d-inline text-start ms-1"></p>
 			</div>
 		</div>
 		<button type="submit" class="btn btn-primary">Registrati</button>
@@ -54,4 +59,8 @@
 		</div>
 	</form>
 </div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{{url_for('static', filename='js/checkPassword.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/fieldIcon.js')}}"></script>
 {% endblock %}

@@ -77,21 +77,6 @@
 										<span class="{% if scheda.rating > 3.5 %}star-full{% else %}star-empty{% endif %}">{% if scheda.rating > 3.5 %}★{% else %}☆{% endif %}</span>
 										<span class="{% if scheda.rating > 4.5 %}star-full{% else %}star-empty{% endif %}">{% if scheda.rating > 4.5 %}★{% else %}☆{% endif %}</span>
 									</div>
-
-										<!-- <fieldset>
-											<span class="star-cb-group-no-hover">
-												<input type="radio" id="rating-5" name="rating" value="5" disabled {% if scheda.rating ==5 %}checked{% endif %}/>
-												<label for="rating-5">5</label>
-												<input type="radio" id="rating-4" name="rating" value="4" disabled {% if scheda.rating ==4 %}checked{% endif %}/>
-												<label for="rating-4">4</label>
-												<input type="radio" id="rating-3" name="rating" value="3" disabled {% if scheda.rating ==3 %}checked{% endif %}/>
-												<label for="rating-3">3</label>
-												<input type="radio" id="rating-2" name="rating" value="2" disabled {% if scheda.rating ==2 %}checked{% endif %}/>
-												<label for="rating-2">2</label>
-												<input type="radio" id="rating-1" name="rating" value="1" disabled {% if scheda.rating ==1 %}checked{% endif %}/>
-												<label for="rating-1">1</label>
-											</span>
-										</fieldset> -->
 									{% else %}
 										<em>Non valutato</em>
 									{% endif %}
