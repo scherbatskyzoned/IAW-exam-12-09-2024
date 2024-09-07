@@ -33,6 +33,7 @@ def create_pt(user):
 	connection.close()
 	return success
 
+
 # Creates Client
 #
 def create_client(user):
@@ -67,10 +68,10 @@ def get_client(client_id):
 	cursor = connection.cursor()
 
 	cursor.execute(query,(client_id,))	
-	result = cursor.fetchone()
+	client = cursor.fetchone()
 	cursor.close()
 	connection.close()
-	return result
+	return client
 
 
 def get_full_name(id, type='client'):
@@ -84,7 +85,10 @@ def get_full_name(id, type='client'):
 	else:
 		cursor.execute(query2,(id,))
 	full_name = cursor.fetchone()
-	return full_name['nome'].capitalize() + ' ' + full_name['cognome'].capitalize()
+	
+	cursor.close()
+	connection.close()
+	return full_name['nome'] + ' ' + full_name['cognome']
 
 
 def get_personal_trainers():
@@ -94,12 +98,12 @@ def get_personal_trainers():
 	query = 'SELECT * FROM PersonalTrainers'
 	cursor.execute(query)
 
-	result = cursor.fetchall()
+	pts = cursor.fetchall()
 	
 	cursor.close()
 	connection.close()
 
-	return result
+	return pts
 
 
 def get_user_id_by_email(user_email, type='client'):
@@ -114,11 +118,11 @@ def get_user_id_by_email(user_email, type='client'):
 	else:
 		cursor.execute(query2, (user_email,))
 
-	result = cursor.fetchone()
+	id = cursor.fetchone()
 
 	cursor.close()
 	connection.close()
-	return result[0]
+	return id[0]
 
 
 def get_pt_clients(pt_id):
@@ -182,8 +186,6 @@ def update_pt_rating(pt_id, rating, votoNuovo, oldRating=0.0):
 	cursor = connection.cursor()
 	cursor.execute(query,(pt_id,))
 	result = cursor.fetchone()
-	cursor.close()
-	connection.close()
 
 	old_media_rating=result['rating']
 	num=result['numOfRatings']
@@ -194,12 +196,9 @@ def update_pt_rating(pt_id, rating, votoNuovo, oldRating=0.0):
 		new_rating=tmp+float(rating)
 	else:
 		new_rating=tmp+float(rating)-float(oldRating)
-	
 	new_rating=new_rating/num
+
 	query='UPDATE PersonalTrainers SET rating=?, numOfRatings=? WHERE pt_id=?'
-	connection = sqlite3.connect('db/personal.db')
-	connection.row_factory = sqlite3.Row
-	cursor = connection.cursor()
 	try:
 		cursor.execute(query,(new_rating,num,pt_id))
 		connection.commit()

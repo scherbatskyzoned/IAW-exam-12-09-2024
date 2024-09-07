@@ -38,10 +38,9 @@
 								<ul class="list-group list-group-flush">
 									{% for workout in allenamenti[scheda.id_scheda]%}
 										<li class="list-group-item">
-											 <h6 class="card-title"><strong>Esercizio #{{loop.index}}</strong></h6>
-											<p class="card-text"><strong>Titolo:</strong> {{workout.titolo}}</p>
-											<p class="card-text"><strong>Livello:</strong> {{workout.livello.capitalize()}} </p>
-											<p class="card-text">{{workout.descrizione}}</p>
+											 <h6 class="card-title"><strong>{{loop.index}}. {{workout.titolo}}</strong></h6>
+											<p class="card-subtitle mb-2 text-body-secondary">Livello: {{workout.livello}}</p>
+											<p class="card-text mb-1">{{workout.descrizione}}</p>
 										</li>
 									{% endfor %}
 								</ul>

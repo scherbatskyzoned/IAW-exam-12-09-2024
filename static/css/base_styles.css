@@ -3,11 +3,6 @@ html, body {
   height: 100%;
   margin: 0;
 }
-.dark-mode {
-  background-color: rgb(21, 21, 21);
-  color: white;
-}
-
 .hero-section {
   background-color: #085c64;
   color: white;
@@ -24,8 +19,9 @@ footer {
 }
 .card {
   transition: transform 0.3s;
+  background-color: #f8f9fa;
+  background-image: var(--bs-gradient);
 }
 .card:hover {
   transform: translateY(-5px);
 }
-

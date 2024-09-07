@@ -29,17 +29,14 @@
   color: #007bff;
   text-decoration: none;
 }
-
 #exclamation {
   color:#b3261e;
   display: none;
   margin-top: .7rem;
 }
-
 #error-message {
   color: #b3261e;
 }
-
 .field-icon {
   float: right;
   margin-left: -25px;

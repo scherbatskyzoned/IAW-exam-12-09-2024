@@ -6,7 +6,7 @@
   <!-- Profile Header -->
   <section class="hero-section py-5">
     <div class="container">
-      <h1 class="mb-3">{{current_user.nome.capitalize()}} {{current_user.cognome.capitalize()}}</h1>
+      <h1 class="mb-3">{{current_user.nome}} {{current_user.cognome}}</h1>
       <div class="d-flex align-items-center justify-content-center">
         <p id="p-rating"><strong>Valutazione:</strong></p>
         {% if current_user.rating != 0.0 %}
@@ -38,13 +38,13 @@
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">{{ allenamento.titolo }}</h5>
-                <p class="card-subtitle text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</p>
+                <p class="card-subtitle text-body-secondary">Livello: {{allenamento.livello}}</p>
                 <p class="card-text">{{allenamento.descrizione}}</p>
                 <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
                 <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
                   <button type="submit" class="btn btn-danger">Elimina</button> 
                 </form>
-                <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
+                <p class="card-text mt-2 text-body-secondary"><small>Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
               </div>
             </div>
           </div>
@@ -66,13 +66,13 @@
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">{{ allenamento.titolo }}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello}}</h6>
                 <p class="card-text">{{allenamento.descrizione}}</p>
                 <a href="/modify_workout/{{allenamento.id_allenamento}}" class="btn btn-primary">Modifica</a>
                 <form class="d-inline" action="/delete_workout/{{allenamento.id_allenamento}}" method="post">
                   <button type="submit" class="btn btn-danger">Elimina</button> 
                 </form>
-                <p class="card-text"><small class="text-body-secondary">Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
+                <p class="card-text mt-2 text-body-secondary"><small>Data di creazione: {{allenamento.data_creazione.split()[0]}}</small></p>
               </div>
             </div>
           </div>

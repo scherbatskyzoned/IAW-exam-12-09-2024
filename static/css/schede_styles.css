@@ -2,6 +2,9 @@
   margin-top: 1.1rem;
   margin-right: .5rem;
 }
+.list-group-item {
+  background-color: #f8f9fa;
+}
 .rating > .star-full {
   content: "★";
   color: #e52;

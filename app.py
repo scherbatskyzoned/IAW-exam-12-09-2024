@@ -12,6 +12,7 @@ app.config['SECRET_KEY'] = 's3cr3t_v41u3'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 # Homepage
 #
 @app.route('/')
@@ -39,8 +40,8 @@ def index():
       for id in clienti_ids:
         numOfSchede[id] = schede_dao.get_num_schede_by_client(id)[0]
       
+  return render_template('index.html', public_workouts=public_workouts, pts=pts_db, clienti=clienti_db, numOfSchede=numOfSchede,creators=creators) 
 
-  return render_template('index.html', datetime=datetime, public_workouts=public_workouts, pts=pts_db, clienti=clienti_db, numOfSchede=numOfSchede,creators=creators) 
 
 # Pagina di presentazione del sito
 #  
@@ -87,6 +88,9 @@ def signup():
     
     new_user['password'] = generate_password_hash(new_user['password'])
 
+    new_user['name'] = new_user['name'].capitalize()
+    new_user['surname'] = new_user['surname'].capitalize()
+
     success = False
     if new_user['tipo'] == 'personal_trainer':
       success = utenti_dao.create_pt(new_user)
@@ -106,6 +110,7 @@ def signup():
     return redirect(url_for('signup'))
   else:
     return render_template('signup.html')
+
 
 # Pagina di Login
 #
@@ -146,6 +151,44 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+
+# Pagina Profilo di un Personal Trainer
+#
+@app.route("/profile")
+def pt_profile():
+  email = utenti_dao.get_email(request)
+  pt_id = utenti_dao.get_user_id_by_email(email,'pt')
+  public_workouts = []
+  private_workouts = []
+  allenamenti_pt_db = allenamenti_dao.get_allenamenti_by_pt(pt_id)
+  for workout in allenamenti_pt_db:
+    if workout['visibile'] == 0:
+      private_workouts.append(workout)
+    else:
+      public_workouts.append(workout)
+
+  return render_template('profile.html', public_workouts=public_workouts, private_workouts=private_workouts)
+
+
+# Assunzione di un Personal Trainer
+#
+@app.route("/assumi_pt/<int:pt_id>", methods=['POST'])
+def assumi_pt(pt_id):
+  email = utenti_dao.get_email(request)
+  client_id = utenti_dao.get_user_id_by_email(email,'client')
+  success = False
+
+  # Check client has not already a personal trainer
+  pt_id_client = utenti_dao.get_user_by_email(email)[0]['pt_id']
+  if pt_id_client is None:
+    success = utenti_dao.set_pt_id(pt_id, client_id)
+  if not success:
+    flash("Impossibile assumere il personal trainer.", "danger")
+  
+  flash("Personal trainer assunto con successo.", "success")
+  return redirect(url_for("index"))
+
+
 # Pagina per la Creazione di un Allenamento
 #
 @app.route("/create_workout",methods=['GET','POST'])
@@ -177,6 +220,9 @@ def create_workout():
       flash("Impossibile creare l'allenamento.", "danger")
       return redirect(url_for('index'))  
 
+    new_workout['titolo'] = new_workout['titolo'].capitalize()
+    new_workout['livello'] = new_workout['livello'].capitalize()
+    
     success = allenamenti_dao.create_allenamento(new_workout,pt_id)
 
     if success:
@@ -189,24 +235,6 @@ def create_workout():
     return render_template('create_workout.html')
 
 
-# Pagina Profilo di un Personal Trainer
-#
-@app.route("/profile")
-def pt_profile():
-  email = utenti_dao.get_email(request)
-  pt_id = utenti_dao.get_user_id_by_email(email,'pt')
-  public_workouts = []
-  private_workouts = []
-  allenamenti_pt_db = allenamenti_dao.get_allenamenti_by_pt(pt_id)
-  for workout in allenamenti_pt_db:
-    if workout['visibile'] == 0:
-      private_workouts.append(workout)
-    else:
-      public_workouts.append(workout)
-
-  return render_template('profile.html', public_workouts=public_workouts, private_workouts=private_workouts)
-
-
 # Pagina di Modifica di un Allenamento
 #
 @app.route("/modify_workout/<int:id_allenamento>", methods=['POST','GET'])
@@ -215,6 +243,7 @@ def modify_workout(id_allenamento):
     workout = request.form.to_dict()
 
     pt_id_workout = allenamenti_dao.get_allenamento(id_allenamento)['pt_id']
+    workout['pt_id'] = pt_id_workout
     email = utenti_dao.get_email(request)
     pt_id = utenti_dao.get_user_id_by_email(email,'pt')
 
@@ -244,11 +273,14 @@ def modify_workout(id_allenamento):
       flash("Impossibile modificare l'allenamento.", "danger")
       return redirect(url_for('index'))  
 
+    workout['titolo'] = workout['titolo'].capitalize()
+    workout['livello'] = workout['livello'].capitalize()
     workout['id_allenamento'] = id_allenamento
     success = allenamenti_dao.modifica_allenamento(workout)
 
     if not success:
       flash("Impossibile modificare l'allenamento.", "danger")
+      return redirect(url_for('pt_profile'))
 
     flash("Allenamento modificato con successo.", "success")
     return redirect(url_for('pt_profile'))
@@ -278,24 +310,6 @@ def delete_workout(id_allenamento):
   flash("Allenamento eliminato con successo.", "success")
   return redirect(url_for("pt_profile"))
 
-# Assunzione di un Personal Trainer
-#
-@app.route("/assumi_pt/<int:pt_id>", methods=['POST'])
-def assumi_pt(pt_id):
-  email = utenti_dao.get_email(request)
-  client_id = utenti_dao.get_user_id_by_email(email,'client')
-
-  # Check client has not already a personal trainer
-  pt_id_client = utenti_dao.get_user_by_email(email)[0]['pt_id']
-  if pt_id_client is None:
-    success = utenti_dao.set_pt_id(pt_id, client_id)
-  else:
-    success = False
-  if not success:
-    flash("Impossibile assumere il personal trainer.", "danger")
-  
-  flash("Personal trainer assunto con successo.", "success")
-  return redirect(url_for("index"))
 
 # Pagina per le Schede
 #
@@ -330,6 +344,7 @@ def schede():
 
   return render_template("schede.html",client_id=client_id,schede=schede,allenamenti=allenamenti_by_id_scheda,name=name)
 
+
 # Pagina per la creazione di una Scheda
 #
 @app.route("/create_scheda",methods=['GET','POST'])
@@ -347,7 +362,8 @@ def create_scheda():
     if (pt_id_client != pt_id):
       flash("Non hai i permessi per creare la scheda.", "danger")
       return redirect(url_for('index'))
-    if ids:
+    # Check that the plan has more than 2 exercises
+    if len(ids) >= 2:
       success = schede_dao.create_scheda(ids,pt_id,new_scheda)
     if success:
       flash("Scheda creata con successo.", "success")
@@ -366,6 +382,7 @@ def create_scheda():
       if allenamento['visibile'] == 1 or allenamento['pt_id'] == pt_id:
         allenamenti.append(allenamento)
     return render_template("create_scheda.html",allenamenti=allenamenti, client_id=client_id)
+
 
 # Valutazione di una Scheda
 #
@@ -386,10 +403,9 @@ def update_rating():
   
   success = schede_dao.set_rating(form_data['id_scheda'], form_data['rating'])
 
-  if form_data['oldRating'] == 'None':
+  if form_data['oldRating'] == 'None': # Primo voto inserito
     utenti_dao.update_pt_rating(pt_id, form_data['rating'], votoNuovo=True)
-  # Voto modificato
-  else:
+  else: # Voto modificato
     utenti_dao.update_pt_rating(pt_id, form_data['rating'], votoNuovo=False, oldRating=form_data['oldRating'])
   
   if success:
@@ -398,31 +414,6 @@ def update_rating():
   flash("Impossibile aggiornare il rating.", "danger")
   return redirect(url_for("index"))
 
-# Eliminazione di una Scheda
-#
-@app.route("/delete_scheda", methods=['POST'])
-def delete_scheda():
-  id_scheda = request.form.get("id_scheda")
-  if id_scheda is None:
-    app.logger.error('Il campo non può essere vuoto')
-    return redirect(url_for('index'))
-  
-  client_id = schede_dao.get_client_id_by_id_scheda(id_scheda)
-
-  pt_id_scheda = schede_dao.get_scheda_by_id(id_scheda)['pt_id']
-  email = utenti_dao.get_email(request)
-  pt_id = utenti_dao.get_user_id_by_email(email,'pt')
-
-  # Check that the pt is the creator of the workout plan
-  if (pt_id_scheda != pt_id):
-    flash("Non hai i permessi per eliminare la scheda.", "danger")
-    return redirect(url_for('index'))
-
-  success = schede_dao.delete_scheda(id_scheda)
-  if not success:
-    flash("Impossibile eliminare la scheda.", "danger")
-  flash("Scheda eliminata con successo.", "success")
-  return redirect (url_for("schede",client_id=client_id)) 
 
 # Pagina di Modifica di una Scheda
 #
@@ -454,26 +445,60 @@ def modify_scheda(id_scheda):
     scheda['id_scheda'] = id_scheda
     ids = request.form.getlist("ids")
 
-    success = schede_dao.update_scheda(scheda, ids)
+    scheda['titolo'] = scheda['titolo'].capitalize()
+    scheda['obiettivo'] = scheda['obiettivo'].capitalize()
+
+    success = False
+    if len(ids) >= 2:
+      success = schede_dao.update_scheda(scheda, ids)
 
     if success:
       flash("Scheda modificata con successo.", "success")
       return redirect(url_for("schede", client_id=client_id))
     flash("Impossibile modificare la scheda.", "danger")
-    return redirect(url_for("index"))
+    return redirect(url_for("schede", client_id=client_id))
   
   else:
     email = utenti_dao.get_email(request)
     pt_id = utenti_dao.get_user_id_by_email(email,'pt')
 
+    # Get the already selected workouts
     scheda = schede_dao.get_scheda_by_id(id_scheda)
     allenamenti_ids = schede_dao.get_allenamenti_ids_by_id_scheda(id_scheda)
     ids = [id['id_allenamento'] for id in allenamenti_ids]
     selected = [allenamenti_dao.get_allenamento(id) for id in ids]
 
+    # Get all the possible workouts to put in the plan
     allenamenti_db = allenamenti_dao.get_allenamenti()
     allenamenti=[]
     for allenamento in allenamenti_db:
       if allenamento['visibile'] == 1 or allenamento['pt_id'] == pt_id:
         allenamenti.append(allenamento)
     return render_template("modify_scheda.html", scheda=scheda,allenamenti=allenamenti,selected=selected)
+  
+
+# Eliminazione di una Scheda
+#
+@app.route("/delete_scheda", methods=['POST'])
+def delete_scheda():
+  id_scheda = request.form.get("id_scheda")
+  if id_scheda is None:
+    app.logger.error('Il campo non può essere vuoto')
+    return redirect(url_for('index'))
+  
+  client_id = schede_dao.get_client_id_by_id_scheda(id_scheda)
+
+  pt_id_scheda = schede_dao.get_scheda_by_id(id_scheda)['pt_id']
+  email = utenti_dao.get_email(request)
+  pt_id = utenti_dao.get_user_id_by_email(email,'pt')
+
+  # Check that the pt is the creator of the workout plan
+  if (pt_id_scheda != pt_id):
+    flash("Non hai i permessi per eliminare la scheda.", "danger")
+    return redirect(url_for('index'))
+
+  success = schede_dao.delete_scheda(id_scheda)
+  if not success:
+    flash("Impossibile eliminare la scheda.", "danger")
+  flash("Scheda eliminata con successo.", "success")
+  return redirect (url_for("schede",client_id=client_id)) 

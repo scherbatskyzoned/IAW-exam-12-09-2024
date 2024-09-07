@@ -2,6 +2,7 @@
 #
 import sqlite3
 
+
 def create_scheda(ids,pt_id,new_scheda):
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
@@ -14,7 +15,6 @@ def create_scheda(ids,pt_id,new_scheda):
 		success = insert_allenamenti(cursor.lastrowid,ids,cursor,connection)
 		if success:
 			connection.commit()
-		success = True
 
 	except Exception as e:
 		print('Error', str(e))
@@ -24,6 +24,7 @@ def create_scheda(ids,pt_id,new_scheda):
 	connection.close()
 	return success
 
+
 def insert_allenamenti(id_scheda,ids,cursor,connection):
 	query = 'INSERT INTO CompostaDa(id_scheda,id_allenamento) VALUES (?,?)'
 	success = False
@@ -31,6 +32,7 @@ def insert_allenamenti(id_scheda,ids,cursor,connection):
 	try:
 		for id in ids:
 			cursor.execute(query, (id_scheda, id))
+		connection.commit()
 		success = True
 	except Exception as e:
 		print('Error', str(e))
@@ -46,11 +48,12 @@ def get_schede_by_client_id(client_id):
 	cursor = connection.cursor()
 
 	cursor.execute(query,(client_id,))
-	result = cursor.fetchall()
+	schede = cursor.fetchall()
 	cursor.close()
 	connection.close()
 
-	return result
+	return schede
+
 
 def set_rating(id_scheda, rating):
 	query = "UPDATE Schede SET rating=? WHERE id_scheda=?"
@@ -146,6 +149,7 @@ def get_scheda_by_id(id_scheda):
 		return result
 	return None
 
+
 def update_scheda(scheda, ids):
 	connection = sqlite3.connect('db/personal.db')
 	connection.row_factory = sqlite3.Row
@@ -161,7 +165,6 @@ def update_scheda(scheda, ids):
 		success = insert_allenamenti(scheda['id_scheda'],ids,cursor,connection)
 		if success:
 			connection.commit()
-		success = True
 
 	except Exception as e:
 		print('Error', str(e))
@@ -170,6 +173,7 @@ def update_scheda(scheda, ids):
 	cursor.close()
 	connection.close()
 	return success
+
 
 def get_num_schede_by_client(client_id):
 	query = 'SELECT COUNT(*) FROM Schede WHERE client_id=?'

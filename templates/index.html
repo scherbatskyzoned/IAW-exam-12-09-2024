@@ -59,7 +59,7 @@
     <!-- Hero Section -->
     <section class="hero-section pt-5 pb-4 text-center text-white d-flex align-items-center justify-content-center">
       <div class="container">
-        <h1 class="display-4">Benvenut{% if current_user.genere == 'female' %}a{% elif current_user.genere == 'male' %}o{% else %}&#601;{% endif %}, {{current_user.nome.capitalize()}}</h1>
+        <h1 class="display-4">Benvenut{% if current_user.genere == 'female' %}a{% elif current_user.genere == 'male' %}o{% else %}&#601;{% endif %}, {{current_user.nome}}</h1>
         <p class="lead">Gestisci i tuoi allenamenti e clienti con facilità.</p>
         <a href="/create_workout" class="btn btn-primary btn-lg mt-4">Crea un Nuovo Allenamento</a>
       </div>
@@ -78,9 +78,9 @@
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">{{allenamento.titolo}}</h5>
-                <p class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello.capitalize()}}</p>
-                <p class="card-text">{{allenamento.descrizione.capitalize()}}</p>
-                <p class="card-text"><small class="text-body-secondary">Creato il {{allenamento.data_creazione.split()[0]}} da {{creators[allenamento.id_allenamento]}}</small></p>
+                <p class="card-subtitle mb-2 text-body-secondary">Livello: {{allenamento.livello}}</p>
+                <p class="card-text">{{allenamento.descrizione}}</p>
+                <p class="card-text mt-2 text-body-secondary"><small>Creato il {{allenamento.data_creazione.split()[0]}} da {{creators[allenamento.id_allenamento]}}</small></p>
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@
           <div class="col-lg-4 col-md-6 mb-4">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">{{cliente.nome.capitalize()}} {{cliente.cognome.capitalize()}}</h5>
+                <h5 class="card-title">{{cliente.nome}} {{cliente.cognome}}</h5>
                 <p class="card-text">Schede di Allenamento: {{ numOfSchede[cliente.client_id]}}</p>
                 <form action="/schede" method="get">
                   <input type="hidden" id="client_id" name="client_id" value="{{cliente.client_id}}" />
@@ -119,11 +119,11 @@
   <!-- Hero Section -->
   <section class="hero-section pt-5 pb-4 text-center text-white d-flex align-items-center justify-content-center">
     <div class="container">
-        <h1 class="display-4">Benvenut{% if current_user.genere == 'female' %}a{% elif current_user.genere == 'male' %}o{% else %}&#601;{% endif %}, {{current_user.nome.capitalize()}}</h1>
-        <p class="lead">Trova il tuo personal trainer e inizia il tuo percorso di allenamento.</p>
-        {% if current_user.pt_id is not none %}
-          <a href="/schede" class="btn btn-primary mt-3">Visualizza le Tue Schede</a>
-        {% endif %}
+      <h1 class="display-4">Benvenut{% if current_user.genere == 'female' %}a{% elif current_user.genere == 'male' %}o{% else %}&#601;{% endif %}, {{current_user.nome}}</h1>
+      <p class="lead">Trova il tuo personal trainer e inizia il tuo percorso di allenamento.</p>
+      {% if current_user.pt_id is not none %}
+        <a href="/schede" class="btn btn-primary mt-3">Visualizza le Tue Schede</a>
+      {% endif %}
     </div>
   </section>
 
@@ -137,7 +137,7 @@
               <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card">
                   <div class="card-body">
-                    <h5 class="card-title">{{pt.nome.capitalize()}} {{pt.cognome.capitalize()}}</h5>
+                    <h5 class="card-title">{{pt.nome}} {{pt.cognome}}</h5>
                     <div class="d-flex align-items-start">
                       <p id="p-rating">Valutazione: </p>
                         {% if pt.rating == 0.0 %} 
