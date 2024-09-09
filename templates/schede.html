@@ -69,13 +69,13 @@
 								<div class="d-flex align-items-center">
 									<p id="p-rating"><strong>Valutazione:</strong></p>
 									{% if scheda.rating is not none %}
-									<div class="rating">
-										<span class="{% if scheda.rating > 0.5 %}star-full{% else %}star-empty{% endif %}">{% if scheda.rating > 0.5 %}★{% else %}☆{% endif %}</span>
-										<span class="{% if scheda.rating > 1.5 %}star-full{% else %}star-empty{% endif %}">{% if scheda.rating > 1.5 %}★{% else %}☆{% endif %}</span>
-										<span class="{% if scheda.rating > 2.5 %}star-full{% else %}star-empty{% endif %}">{% if scheda.rating > 2.5 %}★{% else %}☆{% endif %}</span>
-										<span class="{% if scheda.rating > 3.5 %}star-full{% else %}star-empty{% endif %}">{% if scheda.rating > 3.5 %}★{% else %}☆{% endif %}</span>
-										<span class="{% if scheda.rating > 4.5 %}star-full{% else %}star-empty{% endif %}">{% if scheda.rating > 4.5 %}★{% else %}☆{% endif %}</span>
-									</div>
+										<div class="rating">
+											{{show_star(scheda.rating,0.5)}}
+											{{show_star(scheda.rating,1.5)}}
+											{{show_star(scheda.rating,2.5)}}
+											{{show_star(scheda.rating,3.5)}}
+											{{show_star(scheda.rating,4.5)}}
+										</div>
 									{% else %}
 										<em>Non valutato</em>
 									{% endif %}
@@ -98,3 +98,7 @@
 		</section>
 	</ul>
 {% endblock %}
+
+{% macro show_star(rating,limit) %}
+<i class="star {% if rating > limit+0.2 %}fa-solid fa-star{% elif rating > limit-0.3 %}fa-solid fa-star-half-stroke{% else %}fa-regular fa-star{% endif %}"></i>
+{% endmacro %}

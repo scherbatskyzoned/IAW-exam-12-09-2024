@@ -120,8 +120,10 @@
   <section class="hero-section pt-5 pb-4 text-center text-white d-flex align-items-center justify-content-center">
     <div class="container">
       <h1 class="display-4">Benvenut{% if current_user.genere == 'female' %}a{% elif current_user.genere == 'male' %}o{% else %}&#601;{% endif %}, {{current_user.nome}}</h1>
+      {% if current_user.pt_id is none %}      
       <p class="lead">Trova il tuo personal trainer e inizia il tuo percorso di allenamento.</p>
-      {% if current_user.pt_id is not none %}
+      {% else %}
+        <p class="lead">Inizia il tuo percorso di allenamento.</p>
         <a href="/schede" class="btn btn-primary mt-3">Visualizza le Tue Schede</a>
       {% endif %}
     </div>
@@ -144,11 +146,11 @@
                           <span class="ms-1" id="no-rating"><em>Nessuna valutazione</em></span>
                         {% else %} 
                           <div class="rating">
-                            <span class="{% if pt.rating > 0.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 0.5 %}★{% else %}☆{% endif %}</span>
-                            <span class="{% if pt.rating > 1.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 1.5 %}★{% else %}☆{% endif %}</span>
-                            <span class="{% if pt.rating > 2.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 2.5 %}★{% else %}☆{% endif %}</span>
-                            <span class="{% if pt.rating > 3.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 3.5 %}★{% else %}☆{% endif %}</span>
-                            <span class="{% if pt.rating > 4.5 %}star-full{% else %}star-empty{% endif %}">{% if pt.rating > 4.5 %}★{% else %}☆{% endif %}</span>
+                            {{show_star(pt.rating, 0.5)}}
+                            {{show_star(pt.rating, 1.5)}}
+                            {{show_star(pt.rating, 2.5)}}
+                            {{show_star(pt.rating, 3.5)}}
+                            {{show_star(pt.rating, 4.5)}}
                           </div>
                           <span class="ms-2 mt-1">({{'%.1f'%(pt.rating)}} su 5)</span>
                         {% endif %}
@@ -167,3 +169,7 @@
   {% endif %}
 {% endif %}
 {% endblock %}
+
+{% macro show_star(rating,limit) %}
+<i class="star {% if rating > limit+0.2 %}fa-solid fa-star{% elif rating > limit-0.3 %}fa-solid fa-star-half-stroke{% else %}fa-regular fa-star{% endif %}"></i>
+{% endmacro %}

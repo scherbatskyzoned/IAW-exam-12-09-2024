@@ -13,7 +13,7 @@
       <label for="obiettivoInput" class="form-label">Obiettivo</label>
       <input type="text" value="{{scheda.obiettivo}}" class="form-control" name="obiettivo" id="obiettivoInput" required>
     </div>
-    <label class="form-label">Seleziona allenamenti</label>
+    <label class="form-label">Seleziona allenamenti <em>(almeno 2)</em></label>
     {% for allenamento in allenamenti %}
       <div class="form-check">
         <!-- if esercizio in scheda check the checkbox -->

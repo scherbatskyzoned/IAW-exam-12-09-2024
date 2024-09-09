@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
 
 import utenti_dao, allenamenti_dao, schede_dao
 from models import PersonalTrainer, Client
@@ -220,7 +219,6 @@ def create_workout():
       flash("Impossibile creare l'allenamento.", "danger")
       return redirect(url_for('index'))  
 
-    new_workout['titolo'] = new_workout['titolo'].capitalize()
     new_workout['livello'] = new_workout['livello'].capitalize()
     
     success = allenamenti_dao.create_allenamento(new_workout,pt_id)
@@ -273,7 +271,6 @@ def modify_workout(id_allenamento):
       flash("Impossibile modificare l'allenamento.", "danger")
       return redirect(url_for('index'))  
 
-    workout['titolo'] = workout['titolo'].capitalize()
     workout['livello'] = workout['livello'].capitalize()
     workout['id_allenamento'] = id_allenamento
     success = allenamenti_dao.modifica_allenamento(workout)
@@ -292,9 +289,14 @@ def modify_workout(id_allenamento):
 
 # Eliminazione di un Allenamento
 #
-@app.route("/delete_workout/<int:id_allenamento>", methods=['POST'])
-def delete_workout(id_allenamento):
-  pt_id_workout = allenamenti_dao.get_allenamento(id_allenamento)['pt_id']
+@app.route("/delete_workout", methods=['POST'])
+def delete_workout():
+  workout_id = request.form.get("workout_id")
+  if workout_id is None:
+    app.logger.error('Il campo non può essere vuoto')
+    return redirect(url_for('pt_profile'))
+  
+  pt_id_workout = allenamenti_dao.get_allenamento(workout_id)['pt_id']
   email = utenti_dao.get_email(request)
   pt_id = utenti_dao.get_user_id_by_email(email,'pt')
 
@@ -303,7 +305,7 @@ def delete_workout(id_allenamento):
     flash("Non hai i permessi per eliminare l'allenamento.", "danger")
     return redirect(url_for('pt_profile'))
   
-  success = allenamenti_dao.delete_workout(id_allenamento)
+  success = allenamenti_dao.delete_workout(workout_id)
   if not success:
     flash("Impossibile eliminare l'allenamento.", "danger")
 
@@ -444,9 +446,6 @@ def modify_scheda(id_scheda):
 
     scheda['id_scheda'] = id_scheda
     ids = request.form.getlist("ids")
-
-    scheda['titolo'] = scheda['titolo'].capitalize()
-    scheda['obiettivo'] = scheda['obiettivo'].capitalize()
 
     success = False
     if len(ids) >= 2:

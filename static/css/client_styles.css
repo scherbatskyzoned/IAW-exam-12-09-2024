@@ -5,20 +5,14 @@
 #no-rating {
   margin-top:0.15rem;
 }
-.rating > .star-full {
-  content: "★";
-  color: #e52;
-  text-shadow: 0 0 1px #333;
-}
-.rating > .star-empty {
-  content: "☆";
-  color: #888;
-  text-shadow: none;
-}
 .rating {
   unicode-bidi: bidi-override;
   direction: ltr;
   text-align: center;
+  margin-top: 0.15rem;
+}
+.rating > .star {
+  color: #e52;
 }
 .rating > span {
   display: inline-block;
