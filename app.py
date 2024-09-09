@@ -58,32 +58,32 @@ def signup():
     if new_user['name'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'utente.", "danger")
-      return redirect(url_for('index'))
+      return redirect(url_for('signup'))
     
     if new_user['surname'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'utente.", "danger")
-      return redirect(url_for('index'))
+      return redirect(url_for('signup'))
 
     if new_user['genere'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'utente.", "danger")
-      return redirect(url_for('index'))
+      return redirect(url_for('signup'))
 
     if new_user['email'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'utente.", "danger")
-      return redirect(url_for('index'))
+      return redirect(url_for('signup'))
     
     if new_user['tipo'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'utente.", "danger")
-      return redirect(url_for('index'))
+      return redirect(url_for('signup'))
     
     if new_user['password'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'utente.", "danger")
-      return redirect(url_for('index'))
+      return redirect(url_for('signup'))
     
     new_user['password'] = generate_password_hash(new_user['password'])
 
@@ -128,7 +128,6 @@ def login():
       else:
         new_user = Client(nome=user_db['nome'], cognome=user_db['cognome'], genere=user_db['genere'], client_id=user_db['client_id'], pt_id=user_db['pt_id'], email=user_db['email'], password=user_db['password'])
       login_user(new_user, True)
-
       return redirect(url_for('index'))
   else:
     return render_template('login.html')
@@ -207,17 +206,17 @@ def create_workout():
     if new_workout['titolo'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'allenamento.", "danger")
-      return redirect(url_for('index'))
-    
+      return redirect(url_for('create_workout'))
+        
     if new_workout['description'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'allenamento.", "danger")
-      return redirect(url_for('index'))  
-
+      return redirect(url_for('create_workout'))
+    
     if new_workout['livello'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile creare l'allenamento.", "danger")
-      return redirect(url_for('index'))  
+      return redirect(url_for('create_workout'))
 
     new_workout['livello'] = new_workout['livello'].capitalize()
     
@@ -259,17 +258,18 @@ def modify_workout(id_allenamento):
     if workout['titolo'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile modificare l'allenamento.", "danger")
-      return redirect(url_for('index'))
+      return redirect(url_for("modify_workout", id_allenamento=id_allenamento))
     
     if workout['description'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile modificare l'allenamento.", "danger")
-      return redirect(url_for('index'))  
+      return redirect(url_for("modify_workout", id_allenamento=id_allenamento))
+
 
     if workout['livello'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile modificare l'allenamento.", "danger")
-      return redirect(url_for('index'))  
+      return redirect(url_for("modify_workout", id_allenamento=id_allenamento))
 
     workout['livello'] = workout['livello'].capitalize()
     workout['id_allenamento'] = id_allenamento
@@ -277,7 +277,7 @@ def modify_workout(id_allenamento):
 
     if not success:
       flash("Impossibile modificare l'allenamento.", "danger")
-      return redirect(url_for('pt_profile'))
+      return redirect(url_for("modify_workout", id_allenamento=id_allenamento))
 
     flash("Allenamento modificato con successo.", "success")
     return redirect(url_for('pt_profile'))
@@ -364,6 +364,7 @@ def create_scheda():
     if (pt_id_client != pt_id):
       flash("Non hai i permessi per creare la scheda.", "danger")
       return redirect(url_for('index'))
+    
     # Check that the plan has more than 2 exercises
     if len(ids) >= 2:
       success = schede_dao.create_scheda(ids,pt_id,new_scheda)
@@ -435,14 +436,14 @@ def modify_scheda(id_scheda):
       return redirect(url_for('index'))
   
     if scheda['titolo'].strip() == '':
-        app.logger.error('Il campo non può essere vuoto')
-        flash("Impossibile modificare la scheda.", "danger")
-        return redirect(url_for('index'))
+      app.logger.error('Il campo non può essere vuoto')
+      flash("Impossibile modificare la scheda.", "danger")
+      return redirect(url_for("modify_scheda", id_scheda=id_scheda))
       
     if scheda['obiettivo'].strip() == '':
       app.logger.error('Il campo non può essere vuoto')
       flash("Impossibile modificare la scheda.", "danger")
-      return redirect(url_for('index'))  
+      return redirect(url_for("modify_scheda", id_scheda=id_scheda))
 
     scheda['id_scheda'] = id_scheda
     ids = request.form.getlist("ids")
@@ -455,7 +456,7 @@ def modify_scheda(id_scheda):
       flash("Scheda modificata con successo.", "success")
       return redirect(url_for("schede", client_id=client_id))
     flash("Impossibile modificare la scheda.", "danger")
-    return redirect(url_for("schede", client_id=client_id))
+    return redirect(url_for("modify_scheda", id_scheda=id_scheda))
   
   else:
     email = utenti_dao.get_email(request)
