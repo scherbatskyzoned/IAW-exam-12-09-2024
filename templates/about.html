@@ -35,9 +35,18 @@
 					<li><strong>Personalizzazione:</strong> Ogni cliente è unico, e così deve essere anche il suo percorso di allenamento.</li>
 					<li><strong>Innovazione:</strong> Utilizziamo le ultime tecnologie per migliorare continuamente la nostra piattaforma.</li>
 					<li><strong>Comunità:</strong> Crediamo nella forza della comunità e nel supporto reciproco tra personal trainer e clienti.</li>
+					<li><strong>Alimentazione Sana:</strong> Oltre all'attività fisica, siamo convinti che una <span class="meme">dieta</span> bilanciata e nutriente sia essenziale per il benessere complessivo.</li>
 				</ul>
+			</div>
+		</div>
+		<div class="row justify-content-end">
+			<div class="col-lg-6" id="meme-img">
 			</div>
 		</div>
 	</div>
 </section>
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{{url_for('static', filename='js/showMeme.js')}}"></script>
 {% endblock %}

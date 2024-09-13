@@ -9,3 +9,14 @@
 .team-section {
   padding: 60px 0;
 }
+#meme-img {
+  background-image: url('../img/trump-meme.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 50vh;
+  display: none;
+}
+.meme {
+  cursor: vertical-text;
+}
