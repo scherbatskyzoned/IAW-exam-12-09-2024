@@ -3,8 +3,10 @@ The application is responsive: it is possible to use it via browser on any devic
 Website url: https://beatrice02castorina.pythonanywhere.com/
 
 ## Example Users
+Here are some example users.
+
 | Tipo  | Email  | Password |
-| :---: | :---: | :--- |
+| :---: | :---: | ---: |
 | Personal | beatrice@gmail.com | sonoBeatrice02 
 | Personal | eleonora@gmail.com | sonoLele03
 | Personal | elisa@gmail.com | sonoElisa02
