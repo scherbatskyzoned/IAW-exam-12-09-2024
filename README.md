@@ -9,7 +9,7 @@ To run the application locally it is needed to install the external dependencies
 Here are some example users.
 
 | Tipo  | Email  | Password |
-| :---: | :---: | ---: |
+| :---: | :---: | :---: |
 | Personal | beatrice@gmail.com | sonoBeatrice02 
 | Personal | eleonora@gmail.com | sonoLele03
 | Personal | elisa@gmail.com | sonoElisa02
